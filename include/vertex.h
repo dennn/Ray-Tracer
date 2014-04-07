@@ -2,13 +2,14 @@
 #define _VERTEX_H_
 
 class Vertex {
- public:
-  double x;
-  double y;
-  double z;
-  double w;
-  Vertex(void);
-  void set(double x, double y, double z, double w);
+ 	public:
+  		double x;
+  		double y;
+  		double z;
+  		double w;
+  		Vertex(void);
+ 		Vertex(double x, double y, double z, double w);
+  		void set(double x, double y, double z, double w);
 };
 
 #endif

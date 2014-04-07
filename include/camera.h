@@ -6,23 +6,14 @@
 
 class Camera {
  	public:
- 		Vector eyePosition;
+ 		Vertex eyePosition;
  		Vector lookAt;
  		Vector upVector;
 
- 		Vector u,v,w;
+ 		Vector cameraDirection, cameraUp, cameraRight;
 
  		// Constructor
- 		Camera() {
- 			eyePosition = Vector();
- 			eyePosition.set(0.0, 0.0, 100.0);
- 			lookAt = Vector();
- 			lookAt.set(0.0, 0.0, 0.0);
- 			upVector = Vector();
- 			upVector.set(0.0, 1.0, 0.0);
-
- 			calculateUVW();
- 		}
+ 		Camera();
 
 		void calculateUVW(); 		
 };

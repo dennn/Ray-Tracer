@@ -135,6 +135,7 @@ int main(int argc, const char *argv[])
 	// Create a new camera
 
 	camera = new Camera();
+	camera->calculateUVW();
 
 	// RAYTRACE SCENE
 
@@ -143,14 +144,21 @@ int main(int argc, const char *argv[])
 		for(x=0;x<XSIZE;x+=1)
 		{
 			Ray ray;
-			float d;
 
-			// Calculate a primary ray
-			d = 0.5;
-			ray.P.set(0.0,0.0,0.0,1.0);
-			Vector rayVector = (camera->u * ((((float)x)/XSIZE)-0.5)) + (camera->v * ((((float)y)/XSIZE)-0.5)) - (camera->w * d);
+			/* Calculate a primary ray. Inspired by:
+				http://stackoverflow.com/questions/13078243/ray-tracing-camera
+			*/
+
+			ray.P = camera->eyePosition;
+			double normalised_i = ((double)x/XSIZE) - 0.5;
+			double normalised_j = ((double)y/YSIZE) - 0.5;
+			Vector imagePoint = (camera->cameraRight * normalised_i) + 
+								(camera->cameraUp * normalised_j) + 
+								camera->eyePosition + camera->cameraDirection;
+			Vector rayVector = imagePoint - camera->eyePosition;
 			ray.D = rayVector;
-			ray.D.normalise();
+      		//ray.D.set((((float)x)/XSIZE)-0.5, (((float)y)/XSIZE)-0.5, 0.5);
+      		ray.D.normalise();
 
 			// Trace primary ray
 			Colour col = scene->raytrace(ray,6);

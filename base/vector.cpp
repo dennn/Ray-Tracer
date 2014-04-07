@@ -97,3 +97,31 @@ Vector& Vector::operator += (Vector const &v) {
 
    	return * this;
 }
+
+/* Allow for Vertex to be taken away from vector */
+Vector Vector::operator - (Vertex const &v)
+{
+	return Vector(x-v.x, y-v.y, z-v.z);
+}
+
+Vector& Vector::operator -= (Vertex const &v) {
+   	x -= v.x;
+   	y -= v.y;
+   	z -= v.z;
+
+   	return * this;
+}
+
+/* Allow for Vertex to be added to a vector */
+Vector Vector::operator + (Vertex const &v)
+{
+	return Vector(x+v.x, y+v.y, z+v.z);
+}
+
+Vector& Vector::operator += (Vertex const &v) {
+   	x += v.x;
+   	y += v.y;
+   	z += v.z;
+
+   	return * this;
+}

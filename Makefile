@@ -6,11 +6,11 @@ raytrace: $(OBJS)
 .cpp.o:
 	g++ -c -O -I. $< -o $@
 
-raytrace.o: include/scene.h include/sphere.h include/plane.h include/directional_light.h include/spot_light.h
+raytrace.o: include/scene.h include/sphere.h include/plane.h include/directional_light.h include/spot_light.h include/camera.h
 
 base/scene.o: include/scene.h
 
-base/vector.o: include/vector.h
+base/vector.o: include/vector.h include/vertex.h
 
 base/vertex.o: include/vertex.h
 
@@ -56,6 +56,6 @@ include/object.h: include/vector.h include/vertex.h include/ray.h include/colour
 include/sphere.h: include/object.h
 	touch include/sphere.h
 
-include/camera.h: include/vector.h include/vertx.h
+include/camera.h: include/vector.h include/vertex.h
 	touch include/camera.h
 
