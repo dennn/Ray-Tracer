@@ -1,4 +1,4 @@
-OBJS = raytrace.o base/scene.o base/vector.o base/vertex.o base/colour.o objects/object.o objects/sphere.o base/material.o base/ray.o lights/light.o lights/directional_light.o base/hit.o
+OBJS = raytrace.o base/scene.o base/vector.o base/vertex.o base/colour.o objects/object.o objects/sphere.o base/material.o base/ray.o lights/light.o lights/directional_light.o base/hit.o base/camera.o
 
 raytrace: $(OBJS) 
 	g++ -o raytrace $(OBJS) -lm
@@ -30,6 +30,8 @@ lights/light.o: include/light.h
 
 lights/directional_light.o: include/directional_light.h
 
+base/camera.o: include/camera.h
+
 include/scene.h: include/object.h include/light.h
 	touch include/scene.h
 
@@ -53,4 +55,7 @@ include/object.h: include/vector.h include/vertex.h include/ray.h include/colour
 
 include/sphere.h: include/object.h
 	touch include/sphere.h
+
+include/camera.h: include/vector.h include/vertx.h
+	touch include/camera.h
 
