@@ -16,18 +16,13 @@ class Vector {
 		Vector cross(const Vector &b);
 
 		// Operators
-		Vector operator * (double const d);
-		Vector& operator *= (double const d);
+		Vector operator * (const double &val);
 
-		Vector operator - (Vector const &v);
-		Vector& operator -= (Vector const &v);
-		Vector operator + (Vector const &v);
-		Vector& operator += (Vector const &v);
+		Vector operator - (const Vector &v);
+		Vector operator + (const Vector &v);
 
-		Vector operator - (Vertex const &v);
-		Vector& operator -= (Vertex const &v);
-		Vector operator + (Vertex const &v);
-		Vector& operator += (Vertex const &v);
+		Vector operator - (const Vertex &v);
+		Vector operator + (const Vertex &v);
 };
 
 

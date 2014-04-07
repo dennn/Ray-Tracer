@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <iostream>
 
 #include "include/scene.h"
 #include "include/sphere.h"
@@ -98,7 +99,7 @@ int main(int argc, const char *argv[])
 		Vertex p;
 
 		// position
-		p.set(frand()-0.5,frand()-0.5,frand()+1.0,1.0);
+		p.set(frand()-0.5,frand()-0.5,frand()+5.0,1.0);
 
 		// create with random radius
 		s = new Sphere(p, frand()/2.0);
@@ -135,7 +136,6 @@ int main(int argc, const char *argv[])
 	// Create a new camera
 
 	camera = new Camera();
-	camera->calculateUVW();
 
 	// RAYTRACE SCENE
 
@@ -148,17 +148,15 @@ int main(int argc, const char *argv[])
 			/* Calculate a primary ray. Inspired by:
 				http://stackoverflow.com/questions/13078243/ray-tracing-camera
 			*/
-
 			ray.P = camera->eyePosition;
-			double normalised_i = ((double)x/XSIZE) - 0.5;
-			double normalised_j = ((double)y/YSIZE) - 0.5;
-			Vector imagePoint = (camera->cameraRight * normalised_i) + 
-								(camera->cameraUp * normalised_j) + 
-								camera->eyePosition + camera->cameraDirection;
-			Vector rayVector = imagePoint - camera->eyePosition;
+			double xProjection =  ((double)x/XSIZE) - 0.5;
+			double yProjection =  ((double)y/YSIZE) - 0.5;
+
+			// 1.732 is 60 degree Field of View 
+			Vector rayVector = (camera->cameraRight * xProjection + camera->cameraUp * yProjection + camera->cameraDirection * 1.732);
 			ray.D = rayVector;
       		//ray.D.set((((float)x)/XSIZE)-0.5, (((float)y)/XSIZE)-0.5, 0.5);
-      		ray.D.normalise();
+      		//ray.D.normalise();
 
 			// Trace primary ray
 			Colour col = scene->raytrace(ray,6);

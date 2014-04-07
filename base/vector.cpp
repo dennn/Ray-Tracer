@@ -11,8 +11,9 @@ Vector::Vector()
 
 Vector::Vector(double px, double py, double pz)
 {
-	Vector *v = new Vector();
-	v->set(px, py, pz);
+	x = px;
+	y = py;
+	z = pz;
 }
 
 void Vector::set(double px, double py, double pz)
@@ -48,80 +49,35 @@ double Vector::dot(const Vector &b)
 
 Vector Vector::cross(const Vector &b)
 {
-	Vector vectorC = Vector();
-	vectorC.x = (y*b.z) - (z*b.y);
-	vectorC.y = (z*b.x) - (x*b.z);
-	vectorC.z = (x*b.y) - (y*b.x);
-
-	return vectorC;
+	return Vector(y*b.z - z*b.y, z*b.x - x*b.z, x*b.y - y*b.x);
 }
 
 /*  Allow for vectors to be multiplied by a double or float value */
-Vector Vector::operator * (double const d) 
+Vector Vector::operator * (const double &val) 
 {
-	return Vector(x*d, y*d, z*d);
-}
-
-Vector& Vector::operator *= (double const s) {
-	x *= s;
-   	y *= s;
-   	z *= s;
-
-   return * this;
+	return Vector(x*val, y*val, z*val);
 }
 
 /*  Allow for vectors to be subtracted from each other */
-Vector Vector::operator - (Vector const &v) 
+Vector Vector::operator - (const Vector &v) 
 {
 	return Vector(x-v.x, y-v.y, z-v.z);
-}
-
-Vector& Vector::operator -= (Vector const &v) {
-   	x -= v.x;
-   	y -= v.y;
-   	z -= v.z;
-
-   	return * this;
 }
 
 /* Allow for vectors to be added to each other */
-Vector Vector::operator + (Vector const &v) 
+Vector Vector::operator + (const Vector &v) 
 {
 	return Vector(x+v.x, y+v.y, z+v.z);
 }
 
-Vector& Vector::operator += (Vector const &v) {
-  	x += v.x;
-   	y += v.y;
-   	z += v.z;
-
-   	return * this;
-}
-
 /* Allow for Vertex to be taken away from vector */
-Vector Vector::operator - (Vertex const &v)
+Vector Vector::operator - (const Vertex &v)
 {
 	return Vector(x-v.x, y-v.y, z-v.z);
 }
 
-Vector& Vector::operator -= (Vertex const &v) {
-   	x -= v.x;
-   	y -= v.y;
-   	z -= v.z;
-
-   	return * this;
-}
-
 /* Allow for Vertex to be added to a vector */
-Vector Vector::operator + (Vertex const &v)
+Vector Vector::operator + (const Vertex &v)
 {
 	return Vector(x+v.x, y+v.y, z+v.z);
-}
-
-Vector& Vector::operator += (Vertex const &v) {
-   	x += v.x;
-   	y += v.y;
-   	z += v.z;
-
-   	return * this;
 }
