@@ -16,9 +16,9 @@ void Camera::calculateUVW()
 
 Camera::Camera()
 {
-	eyePosition = Vertex(0.0, 0.0, 0.0, 1.0);
+	eyePosition = Vertex(0.0, 10.0, -5.0, 1.0);
  	lookAt = Vector(0.0, 0.0, 1.0);
- 	upVector = Vector(0.0, 1.0, 0.0);
+ 	upVector = Vector(0.0, -1.0, 0.0);
 
  	calculateUVW();
 }

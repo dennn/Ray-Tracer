@@ -149,14 +149,14 @@ int main(int argc, const char *argv[])
 				http://stackoverflow.com/questions/13078243/ray-tracing-camera
 			*/
 			ray.P = camera->eyePosition;
-			double xProjection =  ((double)x/XSIZE) - 0.5;
-			double yProjection =  ((double)y/YSIZE) - 0.5;
+			double xProjection = 2.0 * ((float)x/XSIZE - 0.5);
+			double yProjection = 2.0 * (0.5 - (float)y/YSIZE);
 
 			// 1.732 is 60 degree Field of View 
 			Vector rayVector = (camera->cameraRight * xProjection + camera->cameraUp * yProjection + camera->cameraDirection * 1.732);
 			ray.D = rayVector;
       		//ray.D.set((((float)x)/XSIZE)-0.5, (((float)y)/XSIZE)-0.5, 0.5);
-      		//ray.D.normalise();
+      		ray.D.normalise();
 
 			// Trace primary ray
 			Colour col = scene->raytrace(ray,6);
