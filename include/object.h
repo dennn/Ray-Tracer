@@ -9,6 +9,8 @@
 #include "include/colour.h"
 #include "include/material.h"
 
+#define FLOAT_ZERO 0.000001f
+
 class Object {
   Object *obj_next;
  public:

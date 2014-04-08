@@ -3,8 +3,6 @@
 
 #include "include/object.h"
 
-#define FLOAT_ZERO 0.000001f
-
 class Triangle: public Object {
   	Vertex v0, v1, v2;
 

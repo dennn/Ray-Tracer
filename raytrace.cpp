@@ -2,10 +2,18 @@
 #include <stdlib.h>
 #include <iostream>
 
+// Scene
 #include "include/scene.h"
+
+// Objects
 #include "include/sphere.h"
 #include "include/triangle.h"
+#include "include/plane.h"
+
+// Lights
 #include "include/directional_light.h"
+
+// Camera
 #include "include/camera.h"
 
 #define XSIZE 512
@@ -107,7 +115,7 @@ int main(int argc, const char *argv[])
 		// create with random radius
 		s = new Sphere(p, frand()/2.0);
 
-		// create new material with shared random Ka and Kd
+		// create new material with red random Ka and Kd
 		m = new Material();
 		m->generateRandomColour();
 
@@ -130,10 +138,20 @@ int main(int argc, const char *argv[])
 	t = new Triangle(p0, p1, p2);
 	m = new Material();
 	m->generateRandomColour();
-
 	t->setMaterial(m);
 
 	scene->addObject(*t);
+
+	// Add a plane
+	Plane *plane;
+	Vertex p;
+	p.set(0.0, 2.0, 0.0, 1.0);
+
+	plane = new Plane(p, 40.0);
+	m->generateRandomColour();
+	plane->setMaterial(m);
+
+	scene->addObject(*plane);
 
 	// Create a new camera
 

@@ -92,9 +92,8 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 			float dlc = xldir.dot(normal);
 
-			if (dlc < 0.0)
-			{
-	dlc = 0.0;
+			if (dlc < 0.0) {
+				dlc = 0.0;
 			}
 
 			// calculate specular component here
