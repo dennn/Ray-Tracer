@@ -18,7 +18,7 @@
 
 #define XSIZE 512
 #define YSIZE 512
-#define ANTIALIASING_SAMPLES 1
+#define ANTIALIASING_SAMPLES 5
 
 #define RAND (float(rand())/float(RAND_MAX))
 
@@ -82,24 +82,19 @@ int main(int argc, const char *argv[])
 	int n;
 	DirectionalLight *dl;
 	Colour cl;
-	Vertex pp;
 
 	srand(30115);
 
 	clear_framebuffer();
 
-	// SETUP SCENE
-
 	// Create a new scene to render
 	scene = new Scene();
 
 	// Create and add a directional light to the scene
-	v.set(-1.0,-1.0,1.0);
+	v.set(-1.0,-1.0,3.0);
 	cl.set(1.0,1.0,1.0,1.0);
-	pp.set(-50.0, 50.0, -48.25, 1.0);
 	
 	dl = new DirectionalLight(v, cl);
-
 	scene->addLight(*dl);
 
 	// Add 10 random spheres to the scene
@@ -148,7 +143,8 @@ int main(int argc, const char *argv[])
 	p.set(0.0, 2.0, 0.0, 1.0);
 
 	plane = new Plane(p, 40.0);
-	m->generateRandomColour();
+	m = new Material();
+	m->generateWhiteColour();
 	plane->setMaterial(m);
 
 	scene->addObject(*plane);

@@ -78,7 +78,7 @@ include/sphere.h: include/object.h
 include/triangle.h: include/object.h
 	touch include/triangle.h
 
-include/plane.h: include/plane.h
+include/plane.h: include/object.h
 	touch include/plane.h
 
 

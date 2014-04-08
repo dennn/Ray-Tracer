@@ -6,12 +6,12 @@
 #include "include/colour.h"
 
 class Light {
-  Light *lt_next;
- public:
-  Light(void);
-  void link(Light *light);
-  Light *next(void);
-  virtual void getLightProperties(Vertex &pos, Vector *ldir, Colour *i);
+  	Light *lt_next;
+ 	public:
+  		Light(void);
+  		void link(Light *light);
+  		Light *next(void);
+  		virtual void getLightProperties(Vertex &pos, Vector *ldir, Colour *i);
 };
 
 #endif

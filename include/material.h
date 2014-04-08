@@ -5,14 +5,16 @@
 
 class Material {
  	public:
-  		Colour ka;
-  		Colour kd;
-  		Colour ks;
-  		Colour kr;
-  		Colour kt;
-  		double n;
+  		Colour ka; // Ambient
+  		Colour kd; // Diffuse
+  		Colour ks; // Specular
+  		Colour kr; // Reflective?
+  		Colour kt; // Transparent?
+  		double n; // ??
 
   		void generateRandomColour();
+  		const void generateWhiteColour();
+
 };
 
 #endif

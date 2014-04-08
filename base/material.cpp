@@ -15,6 +15,26 @@ float _frand()
 	return f;
 }
 
+const void Material::generateWhiteColour()
+{
+	ka.red = 0.1;
+	ka.green = 0.1;
+	ka.blue = 0.1;
+	kd.red = 1.0;
+	kd.green = 1.0;
+	kd.blue = 1.0;
+	kr.red =  0.0;
+	kr.green = 0.0;
+	kr.blue = 0.0;
+	ks.red = 0.5;
+	ks.green = 0.5;
+	ks.blue = 0.5;
+	kt.red = 0.0;
+	kt.green = 0.0;
+	kt.blue = 0.0;
+	n = 400.0;
+}
+
 void Material::generateRandomColour()
 {
 	double cr, cg, cb, ca;
@@ -31,7 +51,7 @@ void Material::generateRandomColour()
 	kr.green = 0.0;
 	kr.blue = 0.0;
 	ks.red = 0.5;
-	ks.green =  0.5;
+	ks.green = 0.5;
 	ks.blue = 0.5;
 	kt.red = 0.0;
 	kt.green = 0.0;
