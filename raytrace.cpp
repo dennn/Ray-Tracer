@@ -92,7 +92,7 @@ int main(int argc, const char *argv[])
 
 	// Create and add a directional light to the scene
 	v.set(-1.0,-1.0,3.0);
-	cl.set(1.0,1.0,1.0,1.0);
+	cl.set(5.0,5.0,5.0,5.0);
 	
 	dl = new DirectionalLight(v, cl);
 	scene->addLight(*dl);
@@ -140,9 +140,9 @@ int main(int argc, const char *argv[])
 	// Add a plane
 	Plane *plane;
 	Vertex p;
-	p.set(0.0, 2.0, 0.0, 1.0);
+	p.set(0.0, 1.0, 0.0, 1.0);
 
-	plane = new Plane(p, 40.0);
+	plane = new Plane(p, 5.0);
 	m = new Material();
 	m->generateWhiteColour();
 	plane->setMaterial(m);

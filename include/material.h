@@ -8,8 +8,8 @@ class Material {
   		Colour ka; // Ambient
   		Colour kd; // Diffuse
   		Colour ks; // Specular
-  		Colour kr; // Reflective?
-  		Colour kt; // Transparent?
+  		Colour kr; // Reflective
+  		Colour kt; // Transparent
   		double n; // ??
 
   		void generateRandomColour();
