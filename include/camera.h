@@ -9,13 +9,15 @@ class Camera {
  		Vertex eyePosition;
  		Vector lookAt;
  		Vector upVector;
+ 		float FOV;
 
  		Vector cameraDirection, cameraUp, cameraRight;
 
  		// Constructor
  		Camera();
 
-		void calculateUVW(); 		
+		void calculateUVW(); 	
+		float FOVToFocusDistance();	
 };
 
 #endif

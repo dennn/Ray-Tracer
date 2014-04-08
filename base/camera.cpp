@@ -1,3 +1,5 @@
+#include <math.h>
+
 #include "include/camera.h"
 
 /* 
@@ -11,14 +13,23 @@ void Camera::calculateUVW()
 	cameraRight = cameraDirection.cross(upVector);
 	cameraRight.normalise();
 	cameraUp = cameraRight.cross(cameraDirection);
-	cameraUp.normalise();
 }
 
 Camera::Camera()
 {
-	eyePosition = Vertex(0.0, 10.0, -5.0, 1.0);
- 	lookAt = Vector(0.0, 0.0, 1.0);
+	eyePosition = Vertex(0.0, 0.0, 1.0, 1.0);
+ 	lookAt = Vector(0.0, 0.0, 2.0);
  	upVector = Vector(0.0, -1.0, 0.0);
 
+ 	FOV = 40.0f;
+
  	calculateUVW();
+}
+
+float Camera::FOVToFocusDistance()
+{
+  float radiansFOV = FOV * static_cast<float>(M_PI) / 180.0f;
+
+  return 1.0 / tan(radiansFOV / 2.0);
+
 }

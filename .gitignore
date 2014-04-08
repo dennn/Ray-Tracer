@@ -1,3 +1,4 @@
 CompGraphics.sublime-project
 
 *.o
+*.ppm

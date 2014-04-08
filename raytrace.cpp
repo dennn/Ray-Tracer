@@ -9,6 +9,9 @@
 
 #define XSIZE 512
 #define YSIZE 512
+#define ANTIALIASING_SAMPLES 1
+
+#define RAND (float(rand())/float(RAND_MAX))
 
 Colour frame_buffer[YSIZE][XSIZE];
 
@@ -136,6 +139,11 @@ int main(int argc, const char *argv[])
 	// Create a new camera
 
 	camera = new Camera();
+	camera->FOV = 30.0f;
+
+	float focusDistance = camera->FOVToFocusDistance();
+
+	float sampleWeight = 1.0f / (ANTIALIASING_SAMPLES * ANTIALIASING_SAMPLES);
 
 	// RAYTRACE SCENE
 
@@ -145,21 +153,44 @@ int main(int argc, const char *argv[])
 		{
 			Ray ray;
 
-			/* Calculate a primary ray. Inspired by:
-				http://stackoverflow.com/questions/13078243/ray-tracing-camera
-			*/
-			ray.P = camera->eyePosition;
-			double xProjection = 2.0 * ((float)x/XSIZE - 0.5);
-			double yProjection = 2.0 * (0.5 - (float)y/YSIZE);
+			Colour col;
 
-			// 1.732 is 60 degree Field of View 
-			Vector rayVector = (camera->cameraRight * xProjection + camera->cameraUp * yProjection + camera->cameraDirection * 1.732);
-			ray.D = rayVector;
-      		//ray.D.set((((float)x)/XSIZE)-0.5, (((float)y)/XSIZE)-0.5, 0.5);
-      		ray.D.normalise();
+			/* If Anti-Aliasing is turned on then fire multiple rays per pixel block, using a jitter*/
 
-			// Trace primary ray
-			Colour col = scene->raytrace(ray,6);
+			if (ANTIALIASING_SAMPLES > 1) {
+				for (int i=0; i< ANTIALIASING_SAMPLES;i++) {
+					for (int j=0; j < ANTIALIASING_SAMPLES;j++) {
+						ray.P = camera->eyePosition;
+						double rayX = 2.0 * ((float)(x + (i+RAND)/ANTIALIASING_SAMPLES)/XSIZE - 0.5);
+						double rayY = 2.0 * (0.5 - (float)(y + (j+RAND)/ANTIALIASING_SAMPLES)/YSIZE);
+
+						/* Calculate a primary ray. Inspired by:
+						http://stackoverflow.com/questions/13078243/ray-tracing-camera */
+
+						Vector rayVector = (camera->cameraRight * rayX + camera->cameraUp * rayY + camera->cameraDirection * focusDistance);
+						ray.D = rayVector;
+      					ray.D.normalise();
+
+						// Trace primary ray
+						Colour tempCol = scene->raytrace(ray,6) * sampleWeight;
+						col = col + tempCol;
+					}
+				}
+			} else {
+				ray.P = camera->eyePosition;
+				double rayX = 2.0 * ((float)x/XSIZE - 0.5);
+				double rayY = 2.0 * (0.5 - (float)y/YSIZE);
+
+				/* Calculate a primary ray. Inspired by:
+				http://stackoverflow.com/questions/13078243/ray-tracing-camera */
+
+				Vector rayVector = (camera->cameraRight * rayX + camera->cameraUp * rayY + camera->cameraDirection * focusDistance);
+				ray.D = rayVector;
+      			ray.D.normalise();
+
+				// Trace primary ray
+				col = scene->raytrace(ray,6);
+			}
 
 			// Save result in frame buffer
 			frame_buffer[y][x].red = col.red;
