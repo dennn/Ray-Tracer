@@ -1,9 +1,9 @@
-#ifndef _SPHERE_H_
-#define _SPHERE_H_
+#ifndef _TRIANGLE_H
+#define _TRIANGLE_H_
 
 #include "include/object.h"
 
-class Sphere: public Object {
+class Triangle: public Object {
   	Vertex sp;
   	float  r;
 
