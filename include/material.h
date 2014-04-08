@@ -4,13 +4,15 @@
 #include "include/colour.h"
 
 class Material {
- public:
-  Colour ka;
-  Colour kd;
-  Colour ks;
-  Colour kr;
-  Colour kt;
-  double n;
+ 	public:
+  		Colour ka;
+  		Colour kd;
+  		Colour ks;
+  		Colour kr;
+  		Colour kt;
+  		double n;
+
+  		void generateRandomColour();
 };
 
 #endif

@@ -12,3 +12,14 @@ Vertex Ray::position(double t)
 
   return v;
 }
+
+Vector Ray::getDirection()
+{
+	return D;
+}
+
+Vertex Ray::getPosition()
+{
+	return P;
+}
+

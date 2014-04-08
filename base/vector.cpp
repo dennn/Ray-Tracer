@@ -1,6 +1,8 @@
 #include <math.h>
 
 #include "include/vector.h"
+#include "include/vertex.h"
+
 
 Vector::Vector()
 {

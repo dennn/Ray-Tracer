@@ -1,7 +1,8 @@
 #ifndef _VECTOR_H_
 #define _VECTOR_H_
 
-#include "Vertex.h"
+// Tell the compiler about vertex
+class Vertex;
 
 class Vector {
 	public:

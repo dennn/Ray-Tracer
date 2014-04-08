@@ -4,6 +4,7 @@
 
 #include "include/scene.h"
 #include "include/sphere.h"
+#include "include/triangle.h"
 #include "include/directional_light.h"
 #include "include/camera.h"
 
@@ -74,7 +75,6 @@ int main(int argc, const char *argv[])
 	DirectionalLight *dl;
 	Colour cl;
 	Vertex pp;
-	double ca, cr, cg,cb;
 
 	srand(30115);
 
@@ -109,25 +109,7 @@ int main(int argc, const char *argv[])
 
 		// create new material with shared random Ka and Kd
 		m = new Material();
-
-		cr = frand(); cg = frand(); cb = frand(); ca = frand();
-
-		m->ka.red = cr * 0.1;
-		m->ka.green = cg * 0.1;
-		m->ka.blue = cb * 0.1;
-		m->kd.red = cr * 0.5;
-		m->kd.green = cg * 0.5;
-		m->kd.blue = cb * 0.5;
-		m->kr.red =  0.0;
-		m->kr.green = 0.0;
-		m->kr.blue = 0.0;
-		m->ks.red = 0.5;
-		m->ks.green =  0.5;
-		m->ks.blue = 0.5;
-		m->kt.red = 0.0;
-		m->kt.green = 0.0;
-		m->kt.blue = 0.0;
-		m->n = 400.0;
+		m->generateRandomColour();
 
 		// set spheres material
 		s->setMaterial(m);
@@ -135,6 +117,23 @@ int main(int argc, const char *argv[])
 		// as sphere to scene
 		scene->addObject(*s);
 	}
+
+	// Add a triangle
+	Triangle *t;
+	Material *m;
+	Vertex p0, p1, p2;
+
+	p0.set(-1.0, 0.0, 1.0, 1.0);
+	p1.set(0.0, 1.0, 1.0, 1.0);
+	p2.set(1.0, 0.0, 1.0, 1.0);
+
+	t = new Triangle(p0, p1, p2);
+	m = new Material();
+	m->generateRandomColour();
+
+	t->setMaterial(m);
+
+	scene->addObject(*t);
 
 	// Create a new camera
 

@@ -17,8 +17,8 @@ void Camera::calculateUVW()
 
 Camera::Camera()
 {
-	eyePosition = Vertex(0.0, 0.0, 1.0, 1.0);
- 	lookAt = Vector(0.0, 0.0, 2.0);
+	eyePosition = Vertex(0.0, 0.0, 8.0, 1.0);
+ 	lookAt = Vector(0.0, 0.0, -1.0);
  	upVector = Vector(0.0, -1.0, 0.0);
 
  	FOV = 40.0f;
