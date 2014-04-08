@@ -18,6 +18,6 @@ Light *Light::next(void)
   return lt_next;
 }
 
-void Light::getLightProperties(Vertex &pos, Vector *ldir, Colour *intensity)
+void Light::getLightProperties(vec4 &pos, vec3 *ldir, Colour *intensity)
 {
 }

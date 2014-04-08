@@ -4,10 +4,10 @@
 #include "include/object.h"
 
 class Triangle: public Object {
-  	Vertex v0, v1, v2;
+  	vec4 v0, v1, v2;
 
  	public:
-  		Triangle(Vertex &pv0, Vertex &pv1, Vertex &pv2);
+  		Triangle(vec4 &pv0, vec4 &pv1, vec4 &pv2);
   		bool intersect(Ray &ray, Hit *h);
 };
 

@@ -6,7 +6,7 @@
 
 // Sphere defined as vertex (in world space) and radius
 
-Sphere::Sphere(Vertex &psp, float pr)
+Sphere::Sphere(vec4 &psp, float pr)
 {
 	sp = psp;
 	r  = pr;
@@ -16,16 +16,16 @@ Sphere::Sphere(Vertex &psp, float pr)
 
 bool Sphere::intersect(Ray &ray, Hit *hit)
 {
-	Vector ro;
+	vec3 ro;
 
 	// offset ray by sphere position
 	// equivalent to transforming ray into local sphere space
 
-	ro.set(ray.P.x-sp.x,ray.P.y-sp.y,ray.P.z-sp.z);
+	ro = vec3(ray.P.x-sp.x,ray.P.y-sp.y,ray.P.z-sp.z);
 
-	float a = ray.D.dot(ray.D);
-	float b = 2.0 * ray.D.dot(ro);
-	float c = ro.dot(ro) - r*r;
+	float a = dot(ray.D, ray.D);
+	float b = 2.0 * dot(ray.D, ro);
+	float c = dot(ro, ro) - r*r;
 
 	float disc = b*b - 4*a*c;
 
@@ -75,7 +75,7 @@ bool Sphere::intersect(Ray &ray, Hit *hit)
 		hit->n.x = hit->p.x - sp.x;
 		hit->n.y = hit->p.y - sp.y;
 		hit->n.z = hit->p.z - sp.z;
-		hit->n.normalise();
+		hit->n.normalize();
 
 		return true;
 	}
@@ -89,7 +89,7 @@ bool Sphere::intersect(Ray &ray, Hit *hit)
 	hit->n.x = hit->p.x - sp.x;
 	hit->n.y = hit->p.y - sp.y;
 	hit->n.z = hit->p.z - sp.z;
-	hit->n.normalise();
+	hit->n.normalize();
 
 	return true;
 }

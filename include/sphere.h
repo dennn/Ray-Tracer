@@ -4,11 +4,11 @@
 #include "include/object.h"
 
 class Sphere: public Object {
-  	Vertex sp;
+  	vec4 sp;
   	float  r;
 
  	public:
-  		Sphere(Vertex &psp, float pr);
+  		Sphere(vec4 &psp, float pr);
   		bool intersect(Ray &ray, Hit *h);
 };
 

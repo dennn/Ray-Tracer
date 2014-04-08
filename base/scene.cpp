@@ -28,8 +28,8 @@ Colour Scene::raytrace(Ray &ray, int level)
 	Object *closest;
 	Light *lt;
 	Hit   hit;
-	Vertex position;
-	Vector normal;
+	vec4 position;
+	vec3 normal;
 
 
 	if (level == 0)
@@ -78,8 +78,8 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 		while (lt != (Light *)0)
 		{
-			Vector ldir;
-			Vector xldir;
+			vec3 ldir;
+			vec3 xldir;
 			Colour lcol;
 
 			// add shadow test here
@@ -88,9 +88,9 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 			lt->getLightProperties(position, &xldir, &lcol);
 
-			xldir.normalise();
+			xldir.normalize();
 
-			float dlc = xldir.dot(normal);
+			float dlc = dot(xldir, normal);
 
 			if (dlc < 0.0) {
 				dlc = 0.0;

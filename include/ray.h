@@ -1,17 +1,18 @@
 #ifndef _RAY_H_
 #define _RAY_H_
 
-#include "include/vertex.h"
-#include "include/vector.h"
+#include "libs/nv_math.h"
+#include "libs/nv_mathdecl.h"
+#include "libs/nv_algebra.h"
 
 class Ray {
  	public:
-  		Vertex P;
-  		Vector D;
-  		Vertex position(double t);
+  		vec4 P;
+  		vec3 D;
+  		vec4 position(double t);
 
-  		Vector getDirection();
-  		Vertex getPosition();
+  		vec3 getDirection();
+  		vec4 getPosition();
 };
 
 #endif

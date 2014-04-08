@@ -77,7 +77,7 @@ int main(int argc, const char *argv[])
 {
 	Scene *scene;
 	Camera *camera;
-	Vector v;
+	vec3 v;
 	int x,y;
 	int n;
 	DirectionalLight *dl;
@@ -91,7 +91,7 @@ int main(int argc, const char *argv[])
 	scene = new Scene();
 
 	// Create and add a directional light to the scene
-	v.set(-1.0,-1.0,3.0);
+	v = vec3(-1.0,-1.0,3.0);
 	cl.set(5.0,5.0,5.0,5.0);
 	
 	dl = new DirectionalLight(v, cl);
@@ -102,10 +102,10 @@ int main(int argc, const char *argv[])
 	{
 		Sphere *s;
 		Material *m;
-		Vertex p;
+		vec4 p;
 
 		// position
-		p.set(frand()-0.5,frand()-0.5,frand()+5.0,1.0);
+		p = vec4(frand()-0.5,frand()-0.5,frand()+5.0,1.0);
 
 		// create with random radius
 		s = new Sphere(p, frand()/2.0);
@@ -124,11 +124,11 @@ int main(int argc, const char *argv[])
 	// Add a triangle
 	Triangle *t;
 	Material *m;
-	Vertex p0, p1, p2;
+	vec4 p0, p1, p2;
 
-	p0.set(-1.0, 0.0, 1.0, 1.0);
-	p1.set(0.0, 1.0, 1.0, 1.0);
-	p2.set(1.0, 0.0, 1.0, 1.0);
+	p0 = vec4(-1.0, 0.0, 1.0, 1.0);
+	p1 = vec4(0.0, 1.0, 1.0, 1.0);
+	p2 = vec4(1.0, 0.0, 1.0, 1.0);
 
 	t = new Triangle(p0, p1, p2);
 	m = new Material();
@@ -139,8 +139,8 @@ int main(int argc, const char *argv[])
 
 	// Add a plane
 	Plane *plane;
-	Vertex p;
-	p.set(0.0, 1.0, 0.0, 1.0);
+	vec4 p;
+	p = vec4(0.0, 1.0, 0.0, 1.0);
 
 	plane = new Plane(p, 5.0);
 	m = new Material();
@@ -165,8 +165,9 @@ int main(int argc, const char *argv[])
 		for(x=0;x<XSIZE;x+=1)
 		{
 			Ray ray;
-
 			Colour col;
+			vec3 focusDistanceVector;
+			mult(focusDistanceVector, camera->cameraDirection, focusDistance);
 
 			/* If Anti-Aliasing is turned on then fire multiple rays per pixel block, using a jitter*/
 
@@ -180,9 +181,13 @@ int main(int argc, const char *argv[])
 						/* Calculate a primary ray. Inspired by:
 						http://stackoverflow.com/questions/13078243/ray-tracing-camera */
 
-						Vector rayVector = (camera->cameraRight * rayX + camera->cameraUp * rayY + camera->cameraDirection * focusDistance);
+						vec3 rayXVector, rayYVector;  
+						mult(rayXVector, camera->cameraRight, rayX);
+						mult(rayYVector, camera->cameraUp, rayY);
+
+						vec3 rayVector = (rayXVector + rayYVector + focusDistanceVector);
 						ray.D = rayVector;
-      					ray.D.normalise();
+      					ray.D.normalize();
 
 						// Trace primary ray
 						Colour tempCol = scene->raytrace(ray,6) * sampleWeight;
@@ -197,9 +202,13 @@ int main(int argc, const char *argv[])
 				/* Calculate a primary ray. Inspired by:
 				http://stackoverflow.com/questions/13078243/ray-tracing-camera */
 
-				Vector rayVector = (camera->cameraRight * rayX + camera->cameraUp * rayY + camera->cameraDirection * focusDistance);
+				vec3 rayXVector, rayYVector;  
+				mult(rayXVector, camera->cameraRight, rayX);
+				mult(rayYVector, camera->cameraUp, rayY);
+
+				vec3 rayVector = (rayXVector + rayYVector + focusDistanceVector);
 				ray.D = rayVector;
-      			ray.D.normalise();
+      			ray.D.normalize();
 
 				// Trace primary ray
 				col = scene->raytrace(ray,6);

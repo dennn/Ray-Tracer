@@ -8,18 +8,18 @@
 */
 void Camera::calculateUVW()
 {
-	cameraDirection = lookAt - eyePosition;
-	cameraDirection.normalise();
-	cameraRight = cameraDirection.cross(upVector);
-	cameraRight.normalise();
-	cameraUp = cameraRight.cross(cameraDirection);
+	sub(cameraDirection, lookAt, eyePosition);
+	cameraDirection.normalize();
+	cross(cameraRight, cameraDirection, upVector);
+	cameraRight.normalize();
+	cross(cameraUp, cameraRight, cameraDirection);
 }
 
 Camera::Camera()
 {
-	eyePosition = Vertex(-5.0, 2.0, -10.0, 1.0);
- 	lookAt = Vector(0.0, 0.0, 4.0);
- 	upVector = Vector(0.0, -1.0, 0.0);
+	eyePosition = vec4(-5.0, 2.0, -10.0, 1.0);
+ 	lookAt = vec3(0.0, 0.0, 4.0);
+ 	upVector = vec3(0.0, -1.0, 0.0);
 
  	FOV = 40.0f;
 

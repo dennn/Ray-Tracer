@@ -1,9 +1,8 @@
 #include "include/ray.h"
 
-
-Vertex Ray::position(double t)
+vec4 Ray::position(double t)
 {
-  Vertex v;
+  vec4 v;
 
   v.x = P.x + t * D.x;
   v.y = P.y + t * D.y;
@@ -13,12 +12,12 @@ Vertex Ray::position(double t)
   return v;
 }
 
-Vector Ray::getDirection()
+vec3 Ray::getDirection()
 {
 	return D;
 }
 
-Vertex Ray::getPosition()
+vec4 Ray::getPosition()
 {
 	return P;
 }

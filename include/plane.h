@@ -4,11 +4,11 @@
 #include "include/object.h"
 
 class Plane: public Object {
-  	Vertex normal;
+  	vec4 normal;
   	float distance;
 
  	public:
-  		Plane(Vertex &pNormal, float pDistance);
+  		Plane(vec4 &pNormal, float pDistance);
   		bool intersect(Ray &ray, Hit *h);
 };
 

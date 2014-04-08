@@ -4,7 +4,7 @@
 
 #include "include/triangle.h"
 
-Triangle::Triangle(Vertex &pv0, Vertex &pv1, Vertex &pv2)
+Triangle::Triangle(vec4 &pv0, vec4 &pv1, vec4 &pv2)
 {
 	v0 = pv0;
 	v1 = pv1;
@@ -17,18 +17,19 @@ Triangle::Triangle(Vertex &pv0, Vertex &pv1, Vertex &pv2)
  */
 bool Triangle::intersect(Ray &ray, Hit *hit)
 {
-	Vector e1, e2, normal;
-	Vector rayDirection = ray.getDirection();
-	Vertex rayPosition = ray.getPosition();
+	vec3 e1, e2, normal;
+	vec3 rayDirection = ray.getDirection();
+	vec4 rayPosition = ray.getPosition();
 
-	e1 = Vector(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
-	e2 = Vector(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
+	e1 = vec3(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
+	e2 = vec3(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
 
-	normal = e1.cross(e2);
-	normal.normalise();
+	cross(normal, e1, e2);
+	normal.normalize();
 
-	Vector pVector = rayDirection.cross(e2);
-	double determinant = e1.dot(pVector);
+	vec3 pVector;
+	cross(pVector, rayDirection, e2);
+	double determinant = dot(e1, pVector);
 
 	if (fabs(determinant) < FLOAT_ZERO) {
 		return false;
@@ -36,25 +37,26 @@ bool Triangle::intersect(Ray &ray, Hit *hit)
 
 	double invertedDeterminant = 1.0/determinant;
 
-	Vector tVector = Vector(rayPosition.x - v0.x, rayPosition.y - v0.y, rayPosition.z - v0.z);
+	vec3 tVector = vec3(rayPosition.x - v0.x, rayPosition.y - v0.y, rayPosition.z - v0.z);
 
-	double lambda = tVector.dot(pVector);
+	double lambda = dot(tVector, pVector);
 	lambda *= invertedDeterminant;
 
 	if (lambda < 0.0 || lambda > 1.0) {
 		return false;
 	}
 
-	Vector qVector = tVector.cross(e1);
+	vec3 qVector;
+	cross(qVector, tVector, e1);
 
-	double mue = rayDirection.dot(qVector);
+	double mue = dot(rayDirection, qVector);
 	mue *= invertedDeterminant;
 
 	if (mue < 0.0 || mue + lambda > 1.0) {
 		return false;
 	}
 
-	double distance = invertedDeterminant * e2.dot(qVector);
+	double distance = invertedDeterminant * dot(e2, qVector);
 
 	if (distance < FLOAT_ZERO) {
 		return false;
@@ -75,7 +77,7 @@ bool Triangle::intersect(Ray &ray, Hit *hit)
 	hit->n.x = normal.x;
 	hit->n.y = normal.y;
 	hit->n.z = normal.z;
-	hit->n.normalise();
+	hit->n.normalize();
 
 	return true;
 }

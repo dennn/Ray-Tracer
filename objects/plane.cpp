@@ -3,7 +3,7 @@
 
 #include "include/plane.h"
 
-Plane::Plane(Vertex &pNormal, float pDistance)
+Plane::Plane(vec4 &pNormal, float pDistance)
 {
 	normal = pNormal;
 	distance = pDistance;
@@ -15,25 +15,24 @@ Plane::Plane(Vertex &pNormal, float pDistance)
  */
 bool Plane::intersect(Ray &ray, Hit *hit)
 {
-	Vector normalVector = Vector(normal.x, normal.y, normal.z);
-	Vector rayDirection = ray.getDirection();
-	Vertex rayPosition = ray.getPosition();
-	Vector rayPositionVector = ray.getPosition().toVector();
+	vec3 normalVector = vec3(normal.x, normal.y, normal.z);
+	vec3 rayDirection = ray.getDirection();
+	vec4 rayPosition = ray.getPosition();
+	vec3 rayPositionVector = vec3(ray.getPosition());
 
-	double cosineRay = normalVector.dot(rayDirection);
+	double cosineRay = dot(normalVector, rayDirection);
 
 	if (fabs(cosineRay) < FLOAT_ZERO) {
 		return false;
 	}
 
-	double _distance = -(rayPositionVector.dot(normalVector) + distance) / cosineRay;
+	double _distance = -(dot(rayPositionVector, normalVector) + distance) / cosineRay;
 
 	if (_distance < 0.0) {
 		return false;
 	}
 
 	// We've got a hit
-
 	hit->obj = this;
 
 	// Distance
@@ -47,7 +46,7 @@ bool Plane::intersect(Ray &ray, Hit *hit)
 	hit->n.x = normal.x;
 	hit->n.y = normal.y;
 	hit->n.z = normal.z;
-	hit->n.normalise();
+	hit->n.normalize();
 
 	return true;
 }

@@ -6,18 +6,18 @@
 
 // specified by a direction and a colour
 
-DirectionalLight::DirectionalLight(Vector &d, Colour &i)
+DirectionalLight::DirectionalLight(vec3 &d, Colour &i)
 {
   direction.x = -d.x;
   direction.y = -d.y;
   direction.z = -d.z;
-  direction.normalise();
+  direction.normalize();
   intensity.set(i.getRed(),i.getGreen(),i.getBlue(),i.getAlpha());
 }
 
 // provide the intensity and direction from which light arrives at given vertex
 
-void DirectionalLight::getLightProperties(Vertex &pos, Vector *ldir, Colour *i)
+void DirectionalLight::getLightProperties(vec4 &pos, vec3 *ldir, Colour *i)
 {
   // the direction is always the same (light is infinitely far away)
   ldir->x = direction.x;

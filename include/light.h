@@ -1,8 +1,10 @@
 #ifndef _LIGHT_H_
 #define _LIGHT_H_
 
-#include "include/vertex.h"
-#include "include/vector.h"
+#include "libs/nv_math.h"
+#include "libs/nv_mathdecl.h"
+#include "libs/nv_algebra.h"
+
 #include "include/colour.h"
 
 class Light {
@@ -11,7 +13,7 @@ class Light {
   		Light(void);
   		void link(Light *light);
   		Light *next(void);
-  		virtual void getLightProperties(Vertex &pos, Vector *ldir, Colour *i);
+  		virtual void getLightProperties(vec4 &pos, vec3 *ldir, Colour *i);
 };
 
 #endif
