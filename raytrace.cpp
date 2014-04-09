@@ -80,10 +80,10 @@ int main(int argc, const char *argv[])
 {
 	Scene *scene;
 	Camera *camera;
-	vec3 v;
+	vec3 v, v2;
 	int x,y;
 	int n;
-	DirectionalLight *dl;
+	DirectionalLight *dl, *dl2;
 	Colour cl;
 	TransformStack *stack;
 
@@ -92,7 +92,7 @@ int main(int argc, const char *argv[])
 	stack->pushMatrix();
 	stack->setIdentityMatrix();
 //	stack->applyScaleTransform(vec3(2.0, 2.0, 2.0));
-	stack->applyTranslateTransform(vec3(0.0, 0.0, -6.0));
+	stack->applyTranslateTransform(vec3(0.0, 0.0, -7.0));
 	//stack->applyRotateTransform(vec3(0.0, 1.0, 0.0), 90.0f);
 	srand(30115);
 
@@ -102,14 +102,17 @@ int main(int argc, const char *argv[])
 	scene = new Scene();
 
 	// Create and add a directional light to the scene
-	v = vec3(-1.0,-1.0,3.0);
-	cl.set(3.0,3.0,3.0,3.0);
+	v = vec3(2.0, 3.0, 0.0);
+	v2 = vec3(-1.0, -1.0, 8.0);
+	cl.set(5.0, 5.0, 5.0, 5.0);
 	
 	dl = new DirectionalLight(v, cl);
+	dl2 = new DirectionalLight(v2, cl);
 	scene->addLight(*dl);
+	scene->addLight(*dl2);
 
 	// Add 10 random spheres to the scene
-	for (n = 0; n < 5; n += 1)
+	for (n = 0; n < 10; n += 1)
 	{
 		Sphere *s;
 		Material *m;
@@ -138,9 +141,9 @@ int main(int argc, const char *argv[])
 	Material *m;
 	vec4 p0, p1, p2;
 
-	p0 = vec4(-1.0, 0.0, 1.0, 1.0);
-	p1 = vec4(0.0, 1.0, 1.0, 1.0);
-	p2 = vec4(1.0, 0.0, 1.0, 1.0);
+	p0 = vec4(-1.0, 0.0, -2.0, 1.0);
+	p1 = vec4(0.0, 1.0, -2.0, 1.0);
+	p2 = vec4(1.0, 0.0, -2.0, 1.0);
 
 	t = new Triangle(p0, p1, p2);
 	invert(t->inverseTransformation, stack->copyCurrentMatrix());
@@ -153,11 +156,11 @@ int main(int argc, const char *argv[])
 	// Add a plane
 	Plane *plane;
 	vec4 p;
-	p = vec4(0.0, 1.0, 0.0, 1.0);
+	p = vec4(0.0, 1.0, 0.0, 0.0);
 
 	plane = new Plane(p, 5.0);
 
-	invert(t->inverseTransformation, stack->copyCurrentMatrix());
+	invert(plane->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateWhiteColour();
 	plane->setMaterial(m);

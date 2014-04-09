@@ -46,13 +46,13 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 	while (obj != (Object *)0)
 	{
-		Ray transformedRay = ray.worldToObjectSpace(obj);
+	//	Ray transformedRay = ray.worldToObjectSpace(obj);
 
-		if(obj->intersect(transformedRay, &hit) == true)
+		if(obj->intersect(ray, &hit) == true)
 		{
 			if (hit.t < t)
 			{
-				hit.objectToWorldSpace();
+		//		hit.objectToWorldSpace();
 				closest = hit.obj;
 				t = hit.t;
 				normal = hit.n;
@@ -81,33 +81,42 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 		while (lt != (Light *)0)
 		{
-			vec3 ldir;
 			vec3 xldir;
 			Colour lcol;
 
-			// add shadow test here
-
-			// calculate diffuse component
-
 			lt->getLightProperties(position, &xldir, &lcol);
-
 			xldir.normalize();
 
-			float dlc = dot(xldir, normal);
+			// add shadow test here
 
-			if (dlc < 0.0) {
-				dlc = 0.0;
+			Ray shadowRay;
+
+			// Fix speckly
+			vec3 dSmall;
+			mult(dSmall, ray.D, 0.01);
+			position -= dSmall;
+			shadowRay.P = position;
+			shadowRay.D = xldir;
+
+			if (shadowtrace(shadowRay, t) == false) {
+				// calculate diffuse component
+
+				float dlc = dot(xldir, normal);
+
+				if (dlc < 0.0) {
+					dlc = 0.0;
+				}
+
+				// calculate specular component here
+
+				float slc = 0.0;
+
+				// combine components
+
+				col.red += ka.red + lcol.red*(dlc * kd.red + slc * ks.red);
+				col.green += ka.green + lcol.green*(dlc * kd.green + slc * ks.green);
+				col.blue += ka.blue + lcol.blue*(dlc * kd.blue + slc * ks.blue);
 			}
-
-			// calculate specular component here
-
-			float slc = 0.0;
-
-			// combine components
-
-			col.red += ka.red + lcol.red*(dlc * kd.red + slc * ks.red);
-			col.green += ka.green + lcol.green*(dlc * kd.green + slc * ks.green);
-			col.blue += ka.blue + lcol.blue*(dlc * kd.blue + slc * ks.blue);
 
 			lt = lt->next(); // next light
 		}
@@ -127,6 +136,20 @@ bool Scene::shadowtrace(Ray &ray, double tlimit)
 	Hit   hit;
 
 	// check for shadow intersections
+	obj = obj_list;
+
+	while (obj != (Object *)0)
+	{
+		if(obj->intersect(ray, &hit) == true)
+		{
+			if (hit.t < tlimit)
+			{
+				return true;
+			}
+		}
+
+		obj = obj->next();
+	}
 
 	return false;
 }
