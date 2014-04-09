@@ -16,7 +16,7 @@ class Ray {
   		vec3 getDirection();
   		vec4 getPosition();
 
-  		Ray inverseTransformOfRay(Object *obj);
+  		Ray worldToObjectSpace(Object *obj);
 };
 
 #endif

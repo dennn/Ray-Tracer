@@ -14,6 +14,9 @@ class Hit {
   		double t;
   		Object *obj;
   		Hit(void);
+
+		void objectToWorldSpace();
+
 };
 
 #endif

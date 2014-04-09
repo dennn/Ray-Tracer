@@ -11,19 +11,21 @@ class TransformStack {
 	private: 
 		std::vector<mat4> stack;
 		mat4 getIdentityMatrix();
+		mat4 currentMatrix;
+
 
  	public:
  		TransformStack();
-
- 		mat4 currentMatrix;
-
  		void pushMatrix();
  		void popMatrix();
+
+ 		mat4 copyCurrentMatrix();
 
  		void setIdentityMatrix();
 
  		void applyScaleTransform(vec3 scale);
  		void applyTranslateTransform(vec3 translate);
+ 		void applyRotateTransform(vec3 rotate, float angles_deg);
 };
 
 #endif

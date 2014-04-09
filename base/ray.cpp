@@ -23,12 +23,13 @@ vec4 Ray::getPosition()
 	return P;
 }
 
-Ray Ray::inverseTransformOfRay(Object *obj)
+// Get into object space
+Ray Ray::worldToObjectSpace(Object *obj)
 {
 	vec4 newPosition;
-	mult(newPosition, obj->inverseTransformation, this->P);
+	mult(newPosition, obj->inverseTransformation, P);
 	vec4 newDirection;
-	mult(newDirection,obj->inverseTransformation, this->D);
+	mult(newDirection,obj->inverseTransformation, D);
 
 	Ray newRay;
 	newRay.P.x = newPosition.x;
@@ -40,5 +41,7 @@ Ray Ray::inverseTransformOfRay(Object *obj)
 	newRay.D.z = newDirection.z;
 	return newRay;
 }
+
+
 
 

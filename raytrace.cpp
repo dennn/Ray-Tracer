@@ -90,9 +90,9 @@ int main(int argc, const char *argv[])
 	// Transformations
 	stack = new TransformStack();
 	stack->pushMatrix();
-	stack->setIdentityMatrix();
-	stack->applyScaleTransform(vec3(4.0, 4.0, 1.0));
-
+	//stack->applyScaleTransform(vec3(2.0, 2.0, 2.0));
+	//stack->applyTranslateTransform(vec3(0.0, 5.0, 0.0));
+	//stack->applyRotateTransform(vec3(0.0, 1.0, 0.0), 90.0f);
 	srand(30115);
 
 	clear_framebuffer();
@@ -102,13 +102,13 @@ int main(int argc, const char *argv[])
 
 	// Create and add a directional light to the scene
 	v = vec3(-1.0,-1.0,3.0);
-	cl.set(2.0,2.0,2.0,2.0);
+	cl.set(3.0,3.0,3.0,3.0);
 	
 	dl = new DirectionalLight(v, cl);
 	scene->addLight(*dl);
 
 	// Add 10 random spheres to the scene
-	for (n = 0; n < 10; n += 1)
+	for (n = 0; n < 100; n += 1)
 	{
 		Sphere *s;
 		Material *m;
@@ -119,7 +119,7 @@ int main(int argc, const char *argv[])
 
 		// create with random radius
 		s = new Sphere(p, frand()/2.0);
-		invert(s->inverseTransformation, stack->currentMatrix);
+		invert(s->inverseTransformation, stack->copyCurrentMatrix());
 
 		// create new material with red random Ka and Kd
 		m = new Material();
@@ -142,8 +142,7 @@ int main(int argc, const char *argv[])
 	p2 = vec4(1.0, 0.0, 1.0, 1.0);
 
 	t = new Triangle(p0, p1, p2);
-	//stack->applyTranslateTransform(vec3(0.0, 0.0, -1.0));
-	invert(t->inverseTransformation, stack->currentMatrix);
+	invert(t->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateRandomColour();
 	t->setMaterial(m);
@@ -156,12 +155,12 @@ int main(int argc, const char *argv[])
 	p = vec4(0.0, 1.0, 0.0, 1.0);
 
 	plane = new Plane(p, 5.0);
-	invert(t->inverseTransformation, stack->currentMatrix);
+	invert(t->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateWhiteColour();
 	plane->setMaterial(m);
 
-	//scene->addObject(*plane);
+	scene->addObject(*plane);
 
 	// Create a new camera
 
@@ -169,7 +168,6 @@ int main(int argc, const char *argv[])
 	camera->FOV = 30.0f;
 
 	float focusDistance = camera->FOVToFocusDistance();
-
 	float sampleWeight = 1.0f / (ANTIALIASING_SAMPLES * ANTIALIASING_SAMPLES);
 
 	// RAYTRACE SCENE

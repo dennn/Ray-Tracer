@@ -46,12 +46,13 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 	while (obj != (Object *)0)
 	{
-		Ray transformedRay = ray.inverseTransformOfRay(obj);
+		Ray transformedRay = ray.worldToObjectSpace(obj);
 
 		if(obj->intersect(transformedRay, &hit) == true)
 		{
 			if (hit.t < t)
 			{
+				hit.objectToWorldSpace();
 				closest = hit.obj;
 				t = hit.t;
 				normal = hit.n;

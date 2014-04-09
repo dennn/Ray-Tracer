@@ -13,10 +13,17 @@ void TransformStack::setIdentityMatrix()
 mat4 TransformStack::getIdentityMatrix()
 {
 	mat4 identity = mat4(1, 0, 0, 0, 
-						0, 1, 0, 0, 
-						0, 0, 1, 0, 
-						0, 0, 0, 1);
+						 0, 1, 0, 0, 
+						 0, 0, 1, 0, 
+						 0, 0, 0, 1);
 	return identity;
+}
+
+mat4 TransformStack::copyCurrentMatrix()
+{
+	mat4 matrixCopy = currentMatrix;
+
+	return matrixCopy;
 }
 
 // Stack functions
@@ -52,3 +59,11 @@ void TransformStack::applyScaleTransform(vec3 scale)
 
 	mult(currentMatrix, currentMatrix, translation);
  }
+
+ void TransformStack::applyRotateTransform(vec3 rotate, float angles_deg) {
+	float rad = angles_deg * (nv_pi / 180); 
+	rotate.normalize();
+	mat4 rotation = getIdentityMatrix();
+	rotation.set_rot(rad,rotate);
+	mult(currentMatrix, currentMatrix, rotation);
+}
