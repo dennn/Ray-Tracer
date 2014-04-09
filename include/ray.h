@@ -5,6 +5,8 @@
 #include "libs/nv_mathdecl.h"
 #include "libs/nv_algebra.h"
 
+class Object;
+
 class Ray {
  	public:
   		vec4 P;
@@ -13,6 +15,8 @@ class Ray {
 
   		vec3 getDirection();
   		vec4 getPosition();
+
+  		Ray inverseTransformOfRay(Object *obj);
 };
 
 #endif

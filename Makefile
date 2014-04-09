@@ -1,4 +1,4 @@
-OBJS = raytrace.o base/scene.o base/colour.o base/material.o base/ray.o base/hit.o base/camera.o objects/object.o objects/sphere.o objects/triangle.o objects/plane.o lights/light.o lights/directional_light.o libs/nv_algebra.o
+OBJS = raytrace.o base/scene.o base/colour.o base/material.o base/ray.o base/hit.o base/camera.o base/transformStack.o objects/object.o objects/sphere.o objects/triangle.o objects/plane.o lights/light.o lights/directional_light.o libs/nv_algebra.o
 
 raytrace: $(OBJS) 
 	g++ -o raytrace $(OBJS) -lm
@@ -21,6 +21,8 @@ base/ray.o: include/ray.h
 base/hit.o: include/hit.h
 
 base/camera.o: include/camera.h
+
+base/transformStack.o: include/transformStack.h
 
 # Objects
 
@@ -55,6 +57,9 @@ include/hit.h:
 include/camera.h: 
 	touch include/camera.h
 
+include/transformStack.h:
+	touch include/transformStack.h
+
 # Lighting
 
 include/light.h:  include/ray.h include/colour.h
@@ -78,7 +83,7 @@ include/plane.h: include/object.h
 	touch include/plane.h
 
 clean: 
-	rm raytrace raytrace.o base/camera.o base/colour.o base/hit.o base/material.o base/ray.o base/scene.o \
+	rm raytrace raytrace.o base/camera.o base/colour.o base/hit.o base/material.o base/ray.o base/scene.o base/transformStack.o \
 		libs/nv_algebra.o \
 		lights/directional_light.o lights/light.o \
 		objects/object.o objects/plane.o objects/sphere.o objects/triangle.o

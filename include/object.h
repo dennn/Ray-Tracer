@@ -13,7 +13,7 @@
 #define FLOAT_ZERO 0.000001f
 
 class Object {
-  	Object *obj_next;
+  	  Object *obj_next;
  	
  	public:
   		Material *obj_mat;
@@ -24,6 +24,8 @@ class Object {
   		Colour getColour();
   		virtual bool intersect(Ray &ray, Hit *h) { return false; }
   		virtual bool sintersect(Ray &ray, Hit *h, double tl);
+
+  		mat4 inverseTransformation;
 };
 
 #endif

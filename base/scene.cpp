@@ -46,7 +46,9 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 	while (obj != (Object *)0)
 	{
-		if(obj->intersect(ray, &hit) == true)
+		Ray transformedRay = ray.inverseTransformOfRay(obj);
+
+		if(obj->intersect(transformedRay, &hit) == true)
 		{
 			if (hit.t < t)
 			{
