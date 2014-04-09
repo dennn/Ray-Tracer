@@ -90,8 +90,9 @@ int main(int argc, const char *argv[])
 	// Transformations
 	stack = new TransformStack();
 	stack->pushMatrix();
-	//stack->applyScaleTransform(vec3(2.0, 2.0, 2.0));
-	//stack->applyTranslateTransform(vec3(0.0, 5.0, 0.0));
+	stack->setIdentityMatrix();
+//	stack->applyScaleTransform(vec3(2.0, 2.0, 2.0));
+	stack->applyTranslateTransform(vec3(0.0, 0.0, -6.0));
 	//stack->applyRotateTransform(vec3(0.0, 1.0, 0.0), 90.0f);
 	srand(30115);
 
@@ -108,7 +109,7 @@ int main(int argc, const char *argv[])
 	scene->addLight(*dl);
 
 	// Add 10 random spheres to the scene
-	for (n = 0; n < 100; n += 1)
+	for (n = 0; n < 5; n += 1)
 	{
 		Sphere *s;
 		Material *m;
@@ -155,6 +156,7 @@ int main(int argc, const char *argv[])
 	p = vec4(0.0, 1.0, 0.0, 1.0);
 
 	plane = new Plane(p, 5.0);
+
 	invert(t->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateWhiteColour();

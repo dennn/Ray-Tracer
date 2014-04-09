@@ -64,6 +64,8 @@ void TransformStack::applyScaleTransform(vec3 scale)
 	float rad = angles_deg * (nv_pi / 180); 
 	rotate.normalize();
 	mat4 rotation = getIdentityMatrix();
+
+	// Nvidid library function
 	rotation.set_rot(rad,rotate);
 	mult(currentMatrix, currentMatrix, rotation);
 }
