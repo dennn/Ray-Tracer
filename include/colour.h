@@ -18,6 +18,7 @@ class Colour {
 
 		Colour operator * (float s);
 		Colour operator + (Colour const &c);
+		void operator *= (const Colour c);
 };
 
 #endif

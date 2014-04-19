@@ -71,3 +71,10 @@ Colour Colour::operator + (Colour const &c) {
 
 	return newColour;
 }
+
+void Colour::operator *= (const Colour c) {
+   	red *= c.red;
+   	green *= c.green;
+   	blue *= c.blue;
+   	alpha *= c.alpha;
+}

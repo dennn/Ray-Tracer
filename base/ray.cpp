@@ -26,7 +26,7 @@ vec4 Ray::getPosition()
 // Get into object space
 Ray Ray::worldToObjectSpace(Object *obj)
 {
-	vec4 originalPosition = vec4(P.x, P.y, P.z, P.w);
+	vec4 originalPosition = vec4(P.x, P.y, P.z, 1);
 	vec4 originalDirection = vec4(D.x, D.y, D.z, 0);
 
 	vec4 newPosition;

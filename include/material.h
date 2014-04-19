@@ -10,10 +10,18 @@ class Material {
   		Colour ks; // Specular
   		Colour kr; // Reflective
   		Colour kt; // Transparent
-  		double n; // ??
+  		double n; // Shininess
+      double refractiveIndex;
 
-  		void generateRandomColour();
   		const void generateWhiteColour();
+      const void generateGlassMaterial();
+      const void generateShinyRedMaterial();
+      const void generateMirrorMaterial();
+
+
+  		bool shiny;
+  		bool reflective;
+  		bool refractive;
 
 };
 

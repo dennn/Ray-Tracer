@@ -4,6 +4,9 @@
 #include "include/object.h"
 #include "include/light.h"
 
+// Camera
+#include "include/camera.h"
+
 class Scene {
   	Object *scache;
   	Object *obj_list;
@@ -15,6 +18,11 @@ class Scene {
   		void addLight(Light &light);
   		Colour raytrace(Ray &ray, int level);
   		bool shadowtrace(Ray &ray, double tlimit);
+
+      vec3 ReflectionVector(vec3 vector, vec3 normal);
+      vec3 RefractVector(vec3 normal, vec3 incident, double refractIndexIn, double refractIndexOut);
+
+      const void createScene1(Camera *camera);
 };
 
 #endif

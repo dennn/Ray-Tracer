@@ -7,12 +7,15 @@ Hit::Hit(void)
 {
 }
 
+// http://www.unknownroad.com/rtfm/graphics/rt_normals.html 
+
 void Hit::objectToWorldSpace()
 {
-	vec4 newPosition;
+	vec4 newPosition, oldPosition;
 	mat4 transformation;
+	oldPosition = vec4(p.x, p.y, p.z, 1);
 	invert(transformation, obj->inverseTransformation);
-	mult(newPosition, transformation , p);
+	mult(newPosition, transformation , oldPosition);
 
 	p.x = newPosition.x;
 	p.y = newPosition.y;

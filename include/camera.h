@@ -6,10 +6,12 @@
 #include "libs/nv_algebra.h"
 
 class Camera {
+	private: 
+	 vec3 upVector;
+
  	public:
  		vec4 eyePosition;
  		vec3 lookAt;
- 		vec3 upVector;
  		float FOV;
 
  		vec3 cameraDirection, cameraUp, cameraRight;

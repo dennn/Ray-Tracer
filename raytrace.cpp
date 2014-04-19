@@ -1,43 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <time.h>     
 
 // Scene
 #include "include/scene.h"
 
-// Objects
-#include "include/sphere.h"
-#include "include/triangle.h"
-#include "include/plane.h"
-
-// Lights
-#include "include/directional_light.h"
-
 // Camera
 #include "include/camera.h"
 
-// Transform Stack
-#include "include/transformStack.h"
-
 #define XSIZE 512
 #define YSIZE 512
-#define ANTIALIASING_SAMPLES 4
+#define ANTIALIASING_SAMPLES 9
 
 #define RAND (float(rand())/float(RAND_MAX))
 
 Colour frame_buffer[YSIZE][XSIZE];
-
-float frand()
-{
-	int x;
-	float f;
-
-	x = rand();
-	f = (float)(x & 0xffff);
-	f = f/65536.0;
-
-	return f;
-}
 
 void write_framebuffer()
 {
@@ -80,97 +58,19 @@ int main(int argc, const char *argv[])
 {
 	Scene *scene;
 	Camera *camera;
-	vec3 v, v2;
 	int x,y;
 	int n;
-	DirectionalLight *dl, *dl2;
-	Colour cl;
-	TransformStack *stack;
-
-	// Transformations
-	stack = new TransformStack();
-	stack->pushMatrix();
-	stack->setIdentityMatrix();
-//	stack->applyScaleTransform(vec3(2.0, 2.0, 2.0));
-	stack->applyTranslateTransform(vec3(0.0, 0.0, -7.0));
-	//stack->applyRotateTransform(vec3(0.0, 1.0, 0.0), 90.0f);
-	srand(30115);
+	
+	srand(30015);
 
 	clear_framebuffer();
 
+	// Create a new camera
+	camera = new Camera();
+
 	// Create a new scene to render
 	scene = new Scene();
-
-	// Create and add a directional light to the scene
-	v = vec3(2.0, 3.0, 0.0);
-	v2 = vec3(-1.0, -1.0, 8.0);
-	cl.set(5.0, 5.0, 5.0, 5.0);
-	
-	dl = new DirectionalLight(v, cl);
-	dl2 = new DirectionalLight(v2, cl);
-	scene->addLight(*dl);
-	scene->addLight(*dl2);
-
-	// Add 10 random spheres to the scene
-	for (n = 0; n < 10; n += 1)
-	{
-		Sphere *s;
-		Material *m;
-		vec4 p;
-
-		// position
-		p = vec4(frand()-0.5,frand()-0.5,frand()+5.0,1.0);
-
-		// create with random radius
-		s = new Sphere(p, frand()/2.0);
-		invert(s->inverseTransformation, stack->copyCurrentMatrix());
-
-		// create new material with red random Ka and Kd
-		m = new Material();
-		m->generateRandomColour();
-
-		// set spheres material
-		s->setMaterial(m);
-
-		// as sphere to scene
-		scene->addObject(*s);
-	}
-
-	// Add a triangle
-	Triangle *t;
-	Material *m;
-	vec4 p0, p1, p2;
-
-	p0 = vec4(-1.0, 0.0, -2.0, 1.0);
-	p1 = vec4(0.0, 1.0, -2.0, 1.0);
-	p2 = vec4(1.0, 0.0, -2.0, 1.0);
-
-	t = new Triangle(p0, p1, p2);
-	invert(t->inverseTransformation, stack->copyCurrentMatrix());
-	m = new Material();
-	m->generateRandomColour();
-	t->setMaterial(m);
-
-	scene->addObject(*t);
-
-	// Add a plane
-	Plane *plane;
-	vec4 p;
-	p = vec4(0.0, 1.0, 0.0, 0.0);
-
-	plane = new Plane(p, 5.0);
-
-	invert(plane->inverseTransformation, stack->copyCurrentMatrix());
-	m = new Material();
-	m->generateWhiteColour();
-	plane->setMaterial(m);
-
-	scene->addObject(*plane);
-
-	// Create a new camera
-
-	camera = new Camera();
-	camera->FOV = 30.0f;
+	scene->createScene1(camera);
 
 	float focusDistance = camera->FOVToFocusDistance();
 	float sampleWeight = 1.0f / (ANTIALIASING_SAMPLES * ANTIALIASING_SAMPLES);
