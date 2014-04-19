@@ -97,7 +97,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 		// Fix speckly
 		vec3 dSmall;
-		mult(dSmall, ray.D, 0.001);
+		mult(dSmall, ray.D, 0.00001);
 		position -= dSmall;
 
 		vec3 viewerDirection = (ray.P - position);
@@ -155,6 +155,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 		// add reflected rays here
 		if (reflective == true) {
 			reflectedRay.D = ReflectionVector(viewerDirection, normal);
+			reflectedRay.D.normalize();
 			reflectedRay.P = position;
 
 			Colour reflectedColour = raytrace(reflectedRay, level-1);
@@ -164,11 +165,24 @@ Colour Scene::raytrace(Ray &ray, int level)
 			col.blue += reflectedColour.blue;
 			col.green += reflectedColour.green;
 		}		
+
+		vec4 newPosition = position;
+		newPosition += dSmall;
+		newPosition += dSmall;
+
+		vec3 newviewerDirection = (ray.P - newPosition);
+		newviewerDirection.normalize();
 	
+
+		bool internalReflection = false;
 		// add refracted rays here
 		if (refractive == true) {
-			refractedRay.D = RefractVector(normal, viewerDirection, 1.0003, refractiveIndex);
-			refractedRay.P = position;
+			refractedRay.D = RefractVector(normal, newviewerDirection, viewerDirection, refractiveIndex, internalReflection);
+			if (internalReflection == true) {
+				refractedRay.P = position;
+			} else {
+				refractedRay.P = newPosition;
+			}
 
 			Colour refractedColour = raytrace(refractedRay, level -1);
 			refractedColour *= kt;
@@ -212,18 +226,26 @@ vec3 Scene::ReflectionVector(vec3 vector, vec3 normal)
 	return -vector + dot(vector, normal) * 2 * normal;
 }
 
-vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndexIn, double refractIndexOut)
+vec3 Scene::RefractVector(vec3 normal, vec3 incident, vec3 oldIncident, double refractIndex, bool internalReflection)
 {
-	double n = refractIndexIn/refractIndexOut;
-	double cosI = dot(-normal, incident);
-	double sinT = n * n * (1.0 - cosI * cosI);
-
-	if (sinT > 1.0) {
-		exit(0);
+	double n;
+	double cosI = dot(normal, incident);
+	vec3 newNormal;
+	if (cosI < 0) {
+	 	n = 1.0003/refractIndex;
+	 	cosI = -cosI;
+	} else {
+		n = refractIndex/1.0003;
+	 	newNormal = -normal;
 	}
 
-	double cosT = sqrt(1.0 - sinT);
-	return n * incident + (n * cosI - cosT) * -normal;
+	double snellRoot = 1.0 - (n * n * (1.0 - cosI * cosI));
+	if (snellRoot <= 1.0) {
+		// Total internal reflection
+		internalReflection = true;
+		return ReflectionVector(normal, oldIncident);
+	}
+	return (n * incident) + (n * cosI - sqrtf(snellRoot)) * newNormal;
 }
 
 /* Predefined scenes */

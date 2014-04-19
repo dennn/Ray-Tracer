@@ -61,7 +61,7 @@ const void Material::generateGlassMaterial()
 	refractiveIndex = 1.52;
 
 	shiny = false;
-	reflective = true;
+	reflective = false;
 	refractive = true;
 }
 
