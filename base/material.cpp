@@ -58,9 +58,9 @@ const void Material::generateGlassMaterial()
 	kt.green = 1.0;
 	kt.blue = 1.0;
 	n = 5.0;
-	refractiveIndex = 1.52;
+	refractiveIndex = 1.05;
 
-	shiny = false;
+	shiny = true;
 	reflective = false;
 	refractive = true;
 }

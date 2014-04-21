@@ -56,7 +56,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 	closest = (Object *)0;
 	obj = obj_list;
 
-//	ray = ray.worldToObjectSpace(obj);
+	ray = ray.worldToObjectSpace(obj);
 
 	while (obj != (Object *)0)
 	{
@@ -64,7 +64,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 		{
 			if (hit.t < t)
 			{
-//				hit.objectToWorldSpace();
+				hit.objectToWorldSpace();
 				closest = hit.obj;
 				t = hit.t;
 				normal = hit.n;
@@ -243,8 +243,7 @@ vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndex)
 	 	newNormal = -normal;
 	}
 
-	// Compute cos theta
-	cosI = dot(newNormal, incident);
+	cosI = dot(incident, newNormal);
 
 	double snellRoot = 1.0 - (n * n) * (1.0 - cosI * cosI);
 
@@ -284,7 +283,6 @@ const void Scene::createScene1(Camera *camera)
 	// Transformations
 	stack = new TransformStack();
 	stack->pushMatrix();
-	stack->setIdentityMatrix();
 
 	// Create and add a directional light to the scene
 	v = vec3(-1.0, -1.0, -2.0);
@@ -322,58 +320,4 @@ const void Scene::createScene1(Camera *camera)
 	m->generateWhiteColour();
 	bottomPlane->setMaterial(m);
 	this->addObject(*bottomPlane);
-
-
-	/* Add a triangle
-	Triangle *t;
-	vec4 p0, p1, p2;
-
-	p0 = vec4(-1.0, 0.0, -2.0, 1.0);
-	p1 = vec4(0.0, 1.0, -2.0, 1.0);
-	p2 = vec4(1.0, 0.0, -2.0, 1.0);
-
-	t = new Triangle(p0, p1, p2);
-	invert(t->inverseTransformation, stack->copyCurrentMatrix());
-	m = new Material();
-	m->generateRandomColour();
-	t->setMaterial(m);
-
-//	this->addObject(*t);*/
-
-	/* Add plane left
-	Plane *leftPlane;
-	p = vec4(1.0, 0.0, 0.0, 1.0);
-
-	leftPlane = new Plane(p, 5.0);
-
-	invert(leftPlane->inverseTransformation, stack->copyCurrentMatrix());
-	m = new Material();
-	m->generateRandomColour();
-	leftPlane->setMaterial(m);
-
-	scene->addObject(*leftPlane);
-
-	// Add plane right
-	Plane *rightPlane;
-	p = vec4(-1.0, 0.0, 0.0, 1.0);
-
-	rightPlane = new Plane(p, 12.0);
-
-	invert(rightPlane->inverseTransformation, stack->copyCurrentMatrix());
-	m->generateRandomColour();
-	rightPlane->setMaterial(m);
-
-	scene->addObject(*rightPlane);
-
-	// Add plane back
-	Plane *backPlane;
-	p = vec4(0.0, 0.0, -1.0, 1.0);
-
-	backPlane = new Plane(p, 30.0);
-
-	invert(backPlane->inverseTransformation, stack->copyCurrentMatrix());
-	m->generateRandomColour();
-	backPlane->setMaterial(m);
-
-	scene->addObject(*backPlane);*/
 }
