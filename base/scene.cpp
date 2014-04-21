@@ -68,6 +68,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 				closest = hit.obj;
 				t = hit.t;
 				normal = hit.n;
+				normal.normalize();
 				position = hit.p;
 			}
 		}
@@ -97,8 +98,9 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 		// Fix speckly
 		vec3 dSmall;
-		mult(dSmall, ray.D, 0.00001);
-		position -= dSmall;
+		mult(dSmall, ray.D, 0.001);
+		vec4 newPosition = position;
+		newPosition -= dSmall;
 
 		vec3 viewerDirection = (ray.P - position);
 		viewerDirection.normalize();
@@ -115,7 +117,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 			Ray shadowRay;
 
-			shadowRay.P = position;
+			shadowRay.P = newPosition;
 			shadowRay.D = xldir;
 
 			if (shadowtrace(shadowRay, t) == false) {
@@ -129,7 +131,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 					float slc = 0.0;
 
 					if (shiny == true) {
-						vec3 lightOffset = vec3(lightPosition - position);
+						vec3 lightOffset = vec3(lightPosition - newPosition);
 						lightOffset.normalize();
 
 						vec3 reflectionVector = ReflectionVector(lightOffset, normal);
@@ -154,9 +156,16 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 		// add reflected rays here
 		if (reflective == true) {
-			reflectedRay.D = ReflectionVector(viewerDirection, normal);
+			reflectedRay.D = ReflectionVector(ray.D, normal);
 			reflectedRay.D.normalize();
-			reflectedRay.P = position;
+
+			// Do the offset
+			vec3 reflectionDSmall;
+			mult(reflectionDSmall, reflectedRay.D, 0.0001);
+			vec4 newReflectionPosition = position;
+			newReflectionPosition += reflectionDSmall;
+
+			reflectedRay.P = newReflectionPosition;
 
 			Colour reflectedColour = raytrace(reflectedRay, level-1);
 			reflectedColour *= kr;
@@ -166,23 +175,17 @@ Colour Scene::raytrace(Ray &ray, int level)
 			col.green += reflectedColour.green;
 		}		
 
-		vec4 newPosition = position;
-		newPosition += dSmall;
-		newPosition += dSmall;
-
-		vec3 newviewerDirection = (ray.P - newPosition);
-		newviewerDirection.normalize();
-	
-
-		bool internalReflection = false;
 		// add refracted rays here
 		if (refractive == true) {
-			refractedRay.D = RefractVector(normal, newviewerDirection, viewerDirection, refractiveIndex, internalReflection);
-			if (internalReflection == true) {
-				refractedRay.P = position;
-			} else {
-				refractedRay.P = newPosition;
-			}
+			refractedRay.D = RefractVector(normal, ray.D, refractiveIndex);
+			refractedRay.D.normalize();
+
+			// Do the offset
+			vec3 refractionDSmall;
+			mult(refractionDSmall, refractedRay.D, 0.001);
+			vec4 newRefractionPosition = position;
+			newRefractionPosition += refractionDSmall;
+			refractedRay.P = newRefractionPosition;
 
 			Colour refractedColour = raytrace(refractedRay, level -1);
 			refractedColour *= kt;
@@ -226,26 +229,31 @@ vec3 Scene::ReflectionVector(vec3 vector, vec3 normal)
 	return -vector + dot(vector, normal) * 2 * normal;
 }
 
-vec3 Scene::RefractVector(vec3 normal, vec3 incident, vec3 oldIncident, double refractIndex, bool internalReflection)
+vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndex)
 {
 	double n;
 	double cosI = dot(normal, incident);
-	vec3 newNormal;
+	vec3 newNormal = normal;
 	if (cosI < 0) {
+		// Entering the object
 	 	n = 1.0003/refractIndex;
-	 	cosI = -cosI;
 	} else {
+		// Exiting the object
 		n = refractIndex/1.0003;
 	 	newNormal = -normal;
 	}
 
-	double snellRoot = 1.0 - (n * n * (1.0 - cosI * cosI));
-	if (snellRoot <= 1.0) {
+	// Compute cos theta
+	cosI = dot(newNormal, incident);
+
+	double snellRoot = 1.0 - (n * n) * (1.0 - cosI * cosI);
+
+	if (snellRoot < 0.0) {
 		// Total internal reflection
-		internalReflection = true;
-		return ReflectionVector(normal, oldIncident);
+		return ReflectionVector(newNormal, incident);
+	} else {
+		return (n * incident) + (n * cosI + sqrtf(snellRoot)) * newNormal;
 	}
-	return (n * incident) + (n * cosI - sqrtf(snellRoot)) * newNormal;
 }
 
 /* Predefined scenes */
