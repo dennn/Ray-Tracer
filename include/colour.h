@@ -11,6 +11,7 @@ class Colour {
 		Colour(void);
 		void clear(void);
 		void set(float pred, float pgreen, float pblue, float palpha);
+		void setRGBA(float rgbRed, float rgbGreen, float rgbBlue, float rgbAlpha);
 		float getRed(void);
 		float getGreen(void);
 		float getBlue(void);

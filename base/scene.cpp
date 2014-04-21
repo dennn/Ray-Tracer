@@ -3,13 +3,17 @@
 
 #include "include/scene.h"
 
+#include "include/object.h"
+
 // Objects
 #include "include/sphere.h"
 #include "include/triangle.h"
 #include "include/plane.h"
+#include "include/cylinder.h"
 
 // Lights
 #include "include/directional_light.h"
+#include "include/point_light.h"
 
 // Transform Stack
 #include "include/transformStack.h"
@@ -110,7 +114,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 			vec3 xldir;
 			Colour lcol;
 
-			lt->getLightProperties(lightPosition, &xldir, &lcol);
+			lt->getLightProperties(position, &xldir, &lcol);
 			xldir.normalize();
 
 			// add shadow test here
@@ -273,7 +277,9 @@ const void Scene::createScene1(Camera *camera)
 {
 	TransformStack *stack;
 	vec3 v, v2;
-	DirectionalLight *dl, *dl2;
+	DirectionalLight *dl;
+	PointLight *pl;
+
 	Colour cl;
 	Material *m;
 
@@ -283,17 +289,24 @@ const void Scene::createScene1(Camera *camera)
 	// Transformations
 	stack = new TransformStack();
 	stack->pushMatrix();
+	//stack->applyScaleTransform(vec3(2.0, 1.0, 2.0));
 
-	// Create and add a directional light to the scene
+	/* Create and add a directional light to the scene
 	v = vec3(-1.0, -1.0, -2.0);
 	cl.set(2.0, 2.0, 2.0, 2.0);
 	dl = new DirectionalLight(v, cl);
-	this->addLight(*dl);
+	this->addLight(*dl);*/
+
+	// Create and add point lights to the scene
+	vec4 lightPosition = vec4(-3.0, 3.0, -9.0, 1.0);
+	cl.set(1.0, 1.0, 0.2, 1.0);
+	pl = new PointLight(lightPosition, cl);
+	this->addLight(*pl);
 
 	// Create and add the glass sphere
 	Sphere *glassSphere;
 	vec4 p;
-	p = vec4(0.0, -3.0, -4.0, 0.0);
+	p = vec4(0.0, -3.0, -4.0, 1.0);
 	glassSphere = new Sphere(p, 2.0);
 	invert(glassSphere->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
@@ -303,7 +316,7 @@ const void Scene::createScene1(Camera *camera)
 
 	// Create and add the shiny red sphere behind 
 	Sphere *redSphere;
-	p = vec4(4.0, -3.0, -14.0, 0.0);
+	p = vec4(4.0, -3.0, -14.0, 1.0);
 	redSphere = new Sphere(p, 2.0);
 	invert(redSphere->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
@@ -320,4 +333,15 @@ const void Scene::createScene1(Camera *camera)
 	m->generateWhiteColour();
 	bottomPlane->setMaterial(m);
 	this->addObject(*bottomPlane);
+
+	/* Add a cylinder
+	Cylinder *cylinder;
+	vec4 bottom = vec4(-4.0, -3.0, -14.0, 1.0);
+	vec4 top = vec4(2.0, 2.0, -14.0, 1.0);
+	cylinder = new Cylinder(bottom, top, 5.0f);
+	invert(cylinder->inverseTransformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedMaterial();
+	cylinder->setMaterial(m);
+	this->addObject(*cylinder);*/
 }

@@ -3,60 +3,30 @@
 #include <math.h>
 #include "include/cylinder.h"
 
-Cylinder::Cylinder(vec4 &topCenter, vec4 &bottomCenter, float radius);
+Cylinder::Cylinder(vec4 &topCenter, vec4 &bottomCenter, float radius)
 {
-	this.topCenter = topCenter;
-	this.bottomCenter = bottomCenter;
-	this.radius = radius;
+	this->topCenter = topCenter;
+	this->bottomCenter = bottomCenter;
+	this->radius = radius;
 }
 
 /* Cylinder intersection test
 http://cs.gettysburg.edu/~skim/cs373/lectures/16_Rectangle_Cylinder.pdf */
 
-bool Sphere::intersect(Ray &ray, Hit *hit)
+bool Cylinder::intersect(Ray &ray, Hit *hit)
 {
 	vec3 cylinderAxis = topCenter - bottomCenter;
 	cylinderAxis.normalize();
 
 	vec3 bottomCenterToRayOrigin = ray.P - bottomCenter;
 
-	vec3 u = ray.D - cylinderAxis * dot(ray.D);
-	vec3 v = bottomCenterToRayOrigin - cylinderAxis * dot(bottomCenterToRayOrigin, cylinderAxis);
+	vec3 u = ray.D - dot(ray.D, cylinderAxis) * cylinderAxis;
+	vec3 v = bottomCenterToRayOrigin - dot(bottomCenterToRayOrigin, cylinderAxis) * cylinderAxis;
 
-	// Solve the quartic equation
-
+	// Solve the quadra	tic equation
 	float a = dot(u, u);
-
-	if (fabs(a) > 0.0) {
-		float b = dot(u, v);
-		float c = dot(v, v) - radius * radius;
-
-		float discriminant = b*b - 4*a*c;
-
-		if (discriminant < 0.0) {
-			return false;
-		}
-
-		discriminant = sqrtf(discriminant);
-
-		float denominator = 1.0/ (2.0 * a);
-
-		root = (-b - discriminant) * denominator;
-
-		if (root >= 0.0) {
-
-		}
-
-	}
-
-	// offset ray by sphere position
-	// equivalent to transforming ray into local sphere space
-
-	ro = vec3(ray.P.x-sp.x,ray.P.y-sp.y,ray.P.z-sp.z);
-
-	float a = dot(ray.D, ray.D);
-	float b = 2.0 * dot(ray.D, ro);
-	float c = dot(ro, ro) - r*r;
+	float b = dot(u, v);
+	float c = dot(v, v) - radius * radius;
 
 	float disc = b*b - 4*a*c;
 
@@ -103,9 +73,9 @@ bool Sphere::intersect(Ray &ray, Hit *hit)
 		hit->p.y = ray.P.y  + t1 * ray.D.y;
 		hit->p.z = ray.P.z  + t1 * ray.D.z;
 		hit->p.w = 1.0;
-		hit->n.x = hit->p.x - sp.x;
-		hit->n.y = hit->p.y - sp.y;
-		hit->n.z = hit->p.z - sp.z;
+		hit->n.x = hit->p.x - topCenter.x;
+		hit->n.y = hit->p.y - topCenter.y;
+		hit->n.z = hit->p.z - topCenter.z;
 		hit->n.normalize();
 
 		return true;
@@ -117,9 +87,9 @@ bool Sphere::intersect(Ray &ray, Hit *hit)
 	hit->p.y = ray.P.y  + t0 * ray.D.y;
 	hit->p.z = ray.P.z  + t0 * ray.D.z;
 	hit->p.w = 1.0;
-	hit->n.x = hit->p.x - sp.x;
-	hit->n.y = hit->p.y - sp.y;
-	hit->n.z = hit->p.z - sp.z;
+	hit->n.x = hit->p.x - topCenter.x;
+	hit->n.y = hit->p.y - topCenter.y;
+	hit->n.z = hit->p.z - topCenter.z;
 	hit->n.normalize();
 
 	return true;

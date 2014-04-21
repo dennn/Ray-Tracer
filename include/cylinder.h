@@ -4,8 +4,8 @@
 #include "include/object.h"
 
 class Cylinder: public Object {
-  	vec4 topCenter, vec4 bottomCenter;
-  	float radius
+  	vec4 topCenter, bottomCenter;
+  	float radius;
 
  	public:
   		Cylinder(vec4 &topCenter, vec4 &bottomCenter, float radius);

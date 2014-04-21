@@ -1,10 +1,10 @@
-OBJS = raytrace.o base/scene.o base/colour.o base/material.o base/ray.o base/hit.o base/camera.o base/transformStack.o objects/object.o objects/sphere.o objects/triangle.o objects/plane.o lights/light.o lights/directional_light.o libs/nv_algebra.o
+OBJS = raytrace.o base/scene.o base/colour.o base/material.o base/ray.o base/hit.o base/camera.o base/transformStack.o objects/object.o objects/sphere.o objects/triangle.o objects/plane.o objects/cylinder.o lights/light.o lights/directional_light.o lights/point_light.o libs/nv_algebra.o
 
 raytrace: $(OBJS) 
-	g++ -o raytrace $(OBJS) -lm
+	g++ -o raytrace $(OBJS) -lm -g
 
 .cpp.o:
-	g++ -c -O -I. $< -o $@
+	g++ -g -c -O -I. $< -o $@
 
 raytrace.o: include/scene.h include/sphere.h include/plane.h include/directional_light.h include/camera.h
 
@@ -34,11 +34,15 @@ objects/triangle.o: include/triangle.h
 
 objects/plane.o: include/plane.h
 
+objects/cylinder.o: include/cylinder.h
+
 # Lighting
 
 lights/light.o: include/light.h
 
 lights/directional_light.o: include/directional_light.h
+
+lights/point_light.o: include/point_light.h
 
 # Base
 
@@ -68,6 +72,9 @@ include/light.h:  include/ray.h include/colour.h
 include/directional_light.h: include/light.h
 	touch include/directional_light.h
 
+include/point_light.h: include/light.h
+	touch include/point_light.h
+
 # Objects
 
 include/object.h: include/ray.h include/colour.h include/material.h include/hit.h
@@ -82,8 +89,11 @@ include/triangle.h: include/object.h
 include/plane.h: include/object.h
 	touch include/plane.h
 
+include/cylinder.h: include/object.h
+	touch include/cylinder.h
+
 clean: 
 	rm raytrace raytrace.o base/camera.o base/colour.o base/hit.o base/material.o base/ray.o base/scene.o base/transformStack.o \
 		libs/nv_algebra.o \
-		lights/directional_light.o lights/light.o \
-		objects/object.o objects/plane.o objects/sphere.o objects/triangle.o
+		lights/directional_light.o lights/light.o lights/point_light.o \
+		objects/object.o objects/plane.o objects/sphere.o objects/triangle.o objects/cylinder.o
