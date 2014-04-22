@@ -12,6 +12,8 @@ class PointLight: public Light {
   	float constantAttenuation;
   	float linearAttenuation;
   	float exponentialAttenuation;
+
+  	bool spotLight;
  	
  	public:
  		PointLight(vec4 &p, Colour &c);

@@ -163,7 +163,8 @@ Colour Scene::raytrace(Ray &ray, int level)
 							vec3 lightOffset = vec3(lightPosition - newPosition);
 							lightOffset.normalize();
 
-							vec3 reflectionVector = SpecularVector(lightOffset, normal);
+							vec3 reflectionVector = ReflectionVector(lightOffset, normal);
+							reflectionVector.normalize();
 
 							float slcDot = dot(viewerDirection, reflectionVector);
 
@@ -252,11 +253,6 @@ bool Scene::shadowtrace(Ray &ray, double tlimit)
 	}
 
 	return false;
-}
-
-vec3 Scene::SpecularVector(vec3 vector, vec3 normal)
-{
-	return -vector + dot(vector, normal) * 2 * normal;
 }
 
 vec3 Scene::ReflectionVector(vec3 vector, vec3 normal)
@@ -353,8 +349,10 @@ const void Scene::createScene1(Camera *camera)
 
 	vec4 p;
 
-	camera->eyePosition = vec3(0.0, -2.0, 10.0);
-	camera->lookAt = vec3(0.0, 0.0, 4.0);
+	camera->eyePosition = vec3(0.0, 0.0, 10.0);
+	camera->lookAt = vec3(0.0, 0.0, 8.0);
+
+	camera->calculateUVW();
 
 	// Transformations
 	stack = new TransformStack();
@@ -367,7 +365,16 @@ const void Scene::createScene1(Camera *camera)
 	dl = new DirectionalLight(v, cl);
 	this->addLight(*dl);
 
-	// Create a pyramid
+	// Create and add point lights to the scene
+/*	vec4 lightPosition = vec4(0.0, 4.0, -8.0, 1.0);
+	vec3 lightDirection = vec3(0.0, -1.0, 0.0);
+	cl.setRGBA(46.0f, 204.0f, 64.0f, 255.0f);
+	cl.setScale(1.0f);
+	pl = new PointLight(lightPosition, cl);
+	//pl = new PointLight(lightPosition, lightDirection, cl);
+	this->addLight(*pl);*/
+
+	//Create a pyramid
 	Triangle *t1, *t2, *t3;
 
 	vec4 pTop, pLeft, pRight, pFront;
@@ -418,16 +425,14 @@ const void Scene::createScene1(Camera *camera)
 	this->addObject(*blueSphere);
 
 	// Create and add the glass sphere
-	/*Sphere *glassSphere;
+	Sphere *glassSphere;
 	p = vec4(0.0, -3.0, 0.0, 1.0);
 	glassSphere = new Sphere(p, 2.0);
 	invert(glassSphere->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateGlassMaterial();
 	glassSphere->setMaterial(m);
-	this->addObject(*glassSphere);*/
-
-//	stack->setIdentityMatrix();
+	this->addObject(*glassSphere);
 
 	// Add plane bottom
 	Plane *bottomPlane;

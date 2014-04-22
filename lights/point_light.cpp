@@ -9,7 +9,6 @@
 PointLight::PointLight(vec4 &p, Colour &i)
 {
 	position = p;
-	direction = vec3(0, 0, 0);
 
 	// Set attentuation values
 	// http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
@@ -17,6 +16,8 @@ PointLight::PointLight(vec4 &p, Colour &i)
 	constantAttenuation = 1.0f;
 	linearAttenuation = 0.007f;
 	exponentialAttenuation = 0.0002f;
+
+	spotLight = false;
 
 	intensity.set(i.getRed(),i.getGreen(),i.getBlue(),i.getAlpha());
 }
@@ -33,6 +34,8 @@ PointLight::PointLight(vec4 &p, vec3 &d, Colour &i)
 	linearAttenuation = 0.002f;
 	exponentialAttenuation = 0.008f;
 
+	spotLight = true;
+
 	intensity.set(i.getRed(),i.getGreen(),i.getBlue(),i.getAlpha());
 }
 
@@ -41,6 +44,16 @@ PointLight::PointLight(vec4 &p, vec3 &d, Colour &i)
 void PointLight::getLightProperties(vec4 &pos, vec3 *ldir, Colour *i)
 {
 	vec3 rayDirection = position - pos;
+	rayDirection.normalize();
+
+	float spotFactor;
+	if (spotLight == true) {
+		spotFactor = dot(rayDirection, direction);
+		pow(spotFactor, 80);
+	} else {
+		spotFactor = 1;
+	}
+
 	// Calculates the length using sqrt(x^2 + y^2 + z^2)
 	float distance = nv_norm(rayDirection);
 
@@ -52,6 +65,9 @@ void PointLight::getLightProperties(vec4 &pos, vec3 *ldir, Colour *i)
 	// Calculate the attenuation
 	float attenuation = 1 / (constantAttenuation + linearAttenuation * distance + exponentialAttenuation * distance * distance);
 
-	// the intensity is always the same (not dependent on where it's going
-	i->set(intensity.getRed()*attenuation,intensity.getGreen()*attenuation,intensity.getBlue()*attenuation,intensity.getAlpha()*attenuation);
+	i->set(intensity.getRed()*attenuation * spotFactor,
+		   intensity.getGreen()*attenuation * spotFactor,
+		   intensity.getBlue()*attenuation * spotFactor,
+		   intensity.getAlpha()*attenuation * spotFactor);
+
 }
