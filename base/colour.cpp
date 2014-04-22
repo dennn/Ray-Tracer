@@ -28,6 +28,22 @@ void Colour::set(float pred, float pgreen, float pblue, float palpha)
 	alpha = palpha;
 }
 
+void Colour::setRGBA(float rgbRed, float rgbGreen, float rgbBlue, float rgbAlpha)
+{
+	red = rgbRed/255.0f;
+	green = rgbGreen/255.0f;
+	blue = rgbBlue/255.0f;
+	alpha = rgbAlpha/255.0f;
+}
+
+void Colour::setScale(float scale)
+{
+	red *= scale;
+	green *= scale;
+	blue *= scale;
+	alpha *= scale;
+}
+
 float Colour::getRed(void)
 {
 	return red;

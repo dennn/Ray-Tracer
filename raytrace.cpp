@@ -11,7 +11,7 @@
 
 #define XSIZE 512
 #define YSIZE 512
-#define ANTIALIASING_SAMPLES 9
+#define ANTIALIASING_SAMPLES 2
 
 #define RAND (float(rand())/float(RAND_MAX))
 
@@ -71,6 +71,8 @@ int main(int argc, const char *argv[])
 	// Create a new scene to render
 	scene = new Scene();
 	scene->createScene1(camera);
+	//scene->createScene2(camera);
+
 
 	float focusDistance = camera->FOVToFocusDistance();
 	float sampleWeight = 1.0f / (ANTIALIASING_SAMPLES * ANTIALIASING_SAMPLES);
@@ -91,7 +93,6 @@ int main(int argc, const char *argv[])
 			if (ANTIALIASING_SAMPLES > 1) {
 				for (int i=0; i< ANTIALIASING_SAMPLES;i++) {
 					for (int j=0; j < ANTIALIASING_SAMPLES;j++) {
-						ray.P = camera->eyePosition;
 						double rayX = 2.0 * ((float)(x + (i+RAND)/ANTIALIASING_SAMPLES)/XSIZE - 0.5);
 						double rayY = 2.0 * (0.5 - (float)(y + (j+RAND)/ANTIALIASING_SAMPLES)/YSIZE);
 
@@ -104,7 +105,7 @@ int main(int argc, const char *argv[])
 
 						vec3 rayVector = (rayXVector + rayYVector + focusDistanceVector);
 						ray.D = rayVector;
-      					ray.D.normalize();
+						ray.P = camera->eyePosition;
 
 						// Trace primary ray
 						Colour tempCol = scene->raytrace(ray,6) * sampleWeight;

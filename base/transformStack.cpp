@@ -21,7 +21,7 @@ mat4 TransformStack::getIdentityMatrix()
 
 mat4 TransformStack::copyCurrentMatrix()
 {
-	mat4 matrixCopy = currentMatrix;
+	mat4 matrixCopy = mat4(currentMatrix);
 
 	return matrixCopy;
 }
@@ -39,7 +39,6 @@ void TransformStack::popMatrix()
 }
 
 // Transformations - Taken from Ray Tracing From the Ground Up
-
 
 void TransformStack::applyScaleTransform(vec3 scale) 
 {

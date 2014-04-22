@@ -14,10 +14,14 @@ class Material {
       double refractiveIndex;
 
   		const void generateWhiteColour();
-      const void generateGlassMaterial();
-      const void generateShinyRedMaterial();
-      const void generateMirrorMaterial();
+      const void generateGreenColour();
+      const void generateGreyColour();
+      const void generateBlueColour();
 
+      const void generateGlassMaterial();
+
+      const void generateShinyRedColour();
+      const void generateShinyWhiteColour();
 
   		bool shiny;
   		bool reflective;

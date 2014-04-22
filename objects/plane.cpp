@@ -16,17 +16,14 @@ Plane::Plane(vec4 &pNormal, float pDistance)
 bool Plane::intersect(Ray &ray, Hit *hit)
 {
 	vec3 normalVector = vec3(normal.x, normal.y, normal.z);
-	vec3 rayDirection = ray.getDirection();
-	vec4 rayPosition = ray.getPosition();
-	vec3 rayPositionVector = vec3(ray.getPosition());
-
-	double cosineRay = dot(normalVector, rayDirection);
+	
+	double cosineRay = dot(normalVector, ray.D);
 
 	if (fabs(cosineRay) < FLOAT_ZERO) {
 		return false;
 	}
 
-	double _distance = -(dot(rayPositionVector, normalVector) + distance) / cosineRay;
+	double _distance = -(dot(ray.P, normalVector) + distance) / cosineRay;
 
 	if (_distance < 0.0) {
 		return false;
@@ -37,6 +34,7 @@ bool Plane::intersect(Ray &ray, Hit *hit)
 
 	// Distance
 	hit->t = _distance;
+	
 	// Point
 	hit->p.x = ray.P.x  + _distance * ray.D.x;
 	hit->p.y = ray.P.y  + _distance * ray.D.y;

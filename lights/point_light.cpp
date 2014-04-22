@@ -12,9 +12,11 @@ PointLight::PointLight(vec4 &p, Colour &i)
 	direction = vec3(0, 0, 0);
 
 	// Set attentuation values
+	// http://www.ogre3d.org/tikiwiki/tiki-index.php?page=-Point+Light+Attenuation
+	// 1.0f, 0.007f, 0.0002f should give a range of 600m
 	constantAttenuation = 1.0f;
-	linearAttenuation = 0.002f;
-	exponentialAttenuation = 0.008f;
+	linearAttenuation = 0.007f;
+	exponentialAttenuation = 0.0002f;
 
 	intensity.set(i.getRed(),i.getGreen(),i.getBlue(),i.getAlpha());
 }

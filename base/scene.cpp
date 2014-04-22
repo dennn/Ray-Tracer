@@ -18,6 +18,9 @@
 // Transform Stack
 #include "include/transformStack.h"
 
+#define AMBIENT_OCCLUSION false
+#define AMBIENT_OCCLUSION_SAMPLES 256
+
 Scene::Scene()
 {
 	scache = 0;
@@ -84,119 +87,142 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 	if (closest != (Object *)0)
 	{
-		lt = light_list;
+		if (AMBIENT_OCCLUSION == true) {
+			int numHits = 0;
 
-		Colour ka = closest->obj_mat->ka;
-		Colour kd = closest->obj_mat->kd;
-		Colour ks = closest->obj_mat->ks;
-		Colour kr = closest->obj_mat->kr;
-		Colour kt = closest->obj_mat->kt;
-		double shininess = closest->obj_mat->n;
-		double refractiveIndex = closest->obj_mat->refractiveIndex;
+			vec3 dSmall;
+			mult(dSmall, ray.D, 0.0001);
+			vec4 newPosition = position;
+			newPosition -= dSmall;
 
-		bool shiny = closest->obj_mat->shiny;
-		bool reflective = closest->obj_mat->reflective;
-		bool refractive = closest->obj_mat->refractive;
-
-		Ray sray, reflectedRay, refractedRay;
-
-		// Fix speckly
-		vec3 dSmall;
-		mult(dSmall, ray.D, 0.001);
-		vec4 newPosition = position;
-		newPosition -= dSmall;
-
-		vec3 viewerDirection = (ray.P - position);
-		viewerDirection.normalize();
-
-		while (lt != (Light *)0)
-		{
-			vec3 xldir;
-			Colour lcol;
-
-			lt->getLightProperties(position, &xldir, &lcol);
-			xldir.normalize();
-
-			// add shadow test here
-
-			Ray shadowRay;
-
-			shadowRay.P = newPosition;
-			shadowRay.D = xldir;
-
-			if (shadowtrace(shadowRay, t) == false) {
-				// calculate diffuse component
-
-				float dlc = dot(xldir, normal);
-
-				if (dlc >= 0.0) {
-					// calculate specular component here
-
-					float slc = 0.0;
-
-					if (shiny == true) {
-						vec3 lightOffset = vec3(lightPosition - newPosition);
-						lightOffset.normalize();
-
-						vec3 reflectionVector = ReflectionVector(lightOffset, normal);
-
-						float slcDot = dot(viewerDirection, reflectionVector);
-
-						if (slcDot > 0.0) {
-							slc = pow(slcDot, shininess);
-						}
-					}
-
-					// combine components
-
-					col.red += ka.red + lcol.red*(dlc * kd.red + slc * ks.red);
-					col.green += ka.green + lcol.green*(dlc * kd.green + slc * ks.green);
-					col.blue += ka.blue + lcol.blue*(dlc * kd.blue + slc * ks.blue);
+			for (int sample = 0; sample <= AMBIENT_OCCLUSION_SAMPLES; sample++) {
+				Ray ambientRay;
+				ambientRay.D = CosineWeightedRandomHemisphereDirection(normal);
+				ambientRay.P = newPosition;
+				if (shadowtrace(ambientRay, t) == true) {
+					numHits++;
 				}
 			}
 
-			lt = lt->next(); // next light
-		}
+			float ratio = 1.0f - (float)((float)numHits/ (float)AMBIENT_OCCLUSION_SAMPLES);
 
-		// add reflected rays here
-		if (reflective == true) {
-			reflectedRay.D = ReflectionVector(ray.D, normal);
-			reflectedRay.D.normalize();
+			col.setRGBA(255.0f * ratio, 255.0f * ratio, 255.0f* ratio, 255.0f* ratio);
 
-			// Do the offset
-			vec3 reflectionDSmall;
-			mult(reflectionDSmall, reflectedRay.D, 0.0001);
-			vec4 newReflectionPosition = position;
-			newReflectionPosition += reflectionDSmall;
+		} else {
+			lt = light_list;
 
-			reflectedRay.P = newReflectionPosition;
+			Colour ka = closest->obj_mat->ka;
+			Colour kd = closest->obj_mat->kd;
+			Colour ks = closest->obj_mat->ks;
+			Colour kr = closest->obj_mat->kr;
+			Colour kt = closest->obj_mat->kt;
+			double shininess = closest->obj_mat->n;
+			double refractiveIndex = closest->obj_mat->refractiveIndex;
 
-			Colour reflectedColour = raytrace(reflectedRay, level-1);
-			reflectedColour *= kr;
+			bool shiny = closest->obj_mat->shiny;
+			bool reflective = closest->obj_mat->reflective;
+			bool refractive = closest->obj_mat->refractive;
 
-			col.red += reflectedColour.red;
-			col.blue += reflectedColour.blue;
-			col.green += reflectedColour.green;
-		}		
+			Ray sray, reflectedRay, refractedRay;
 
-		// add refracted rays here
-		if (refractive == true) {
-			refractedRay.D = RefractVector(normal, ray.D, refractiveIndex);
-			refractedRay.D.normalize();
+			// Fix speckly
+			vec3 dSmall;
+			mult(dSmall, ray.D, 0.001);
+			vec4 newPosition = position;
+			newPosition -= dSmall;
 
-			// Do the offset
-			vec3 refractionDSmall;
-			mult(refractionDSmall, refractedRay.D, 0.001);
-			vec4 newRefractionPosition = position;
-			newRefractionPosition += refractionDSmall;
-			refractedRay.P = newRefractionPosition;
+			vec3 viewerDirection = (ray.P - position);
+			viewerDirection.normalize();
 
-			Colour refractedColour = raytrace(refractedRay, level -1);
-			refractedColour *= kt;
+			while (lt != (Light *)0)
+			{
+				vec3 xldir;
+				Colour lcol;
 
-			col.red += refractedColour.red;
-			col.blue += refractedColour.blue;
-			col.green += refractedColour.green;
+				lt->getLightProperties(position, &xldir, &lcol);
+				xldir.normalize();
+
+				// add shadow test here
+
+				Ray shadowRay;
+
+				shadowRay.P = newPosition;
+				shadowRay.D = xldir;
+
+				if (shadowtrace(shadowRay, t) == false) {
+				// calculate diffuse component
+
+					float dlc = dot(xldir, normal);
+
+					if (dlc >= 0.0) {
+					// calculate specular component here
+
+						float slc = 0.0;
+
+						if (shiny == true) {
+							vec3 lightOffset = vec3(lightPosition - newPosition);
+							lightOffset.normalize();
+
+							vec3 reflectionVector = SpecularVector(lightOffset, normal);
+
+							float slcDot = dot(viewerDirection, reflectionVector);
+
+							if (slcDot > 0.0) {
+								slc = pow(slcDot, shininess);
+							}
+						}
+
+					// combine components
+
+						col.red += ka.red + lcol.red*(dlc * kd.red + slc * ks.red);
+						col.green += ka.green + lcol.green*(dlc * kd.green + slc * ks.green);
+						col.blue += ka.blue + lcol.blue*(dlc * kd.blue + slc * ks.blue);
+					}
+				}
+
+				lt = lt->next(); // next light
+			}
+
+			// add reflected rays here
+			if (reflective == true) {
+				reflectedRay.D = ReflectionVector(ray.D, normal);
+				reflectedRay.D.normalize();
+
+				// Do the offset
+				vec3 reflectionDSmall;
+				mult(reflectionDSmall, reflectedRay.D, 0.0001);
+				vec4 newReflectionPosition = position;
+				newReflectionPosition += reflectionDSmall;
+
+				reflectedRay.P = newReflectionPosition;
+
+				Colour reflectedColour = raytrace(reflectedRay, level-1);
+				reflectedColour *= kr;
+
+				col.red += reflectedColour.red;
+				col.blue += reflectedColour.blue;
+				col.green += reflectedColour.green;
+			}		
+
+			// add refracted rays here
+			if (refractive == true) {
+				refractedRay.D = RefractVector(normal, ray.D, refractiveIndex);
+				refractedRay.D.normalize();
+
+				// Do the offset
+				vec3 refractionDSmall;
+				mult(refractionDSmall, refractedRay.D, 0.001);
+				vec4 newRefractionPosition = position;
+				newRefractionPosition += refractionDSmall;
+				refractedRay.P = newRefractionPosition;
+
+				Colour refractedColour = raytrace(refractedRay, level -1);
+				refractedColour *= kt;
+
+				col.red += refractedColour.red;
+				col.blue += refractedColour.blue;
+				col.green += refractedColour.green;
+			}
 		}
 	}
 
@@ -228,9 +254,14 @@ bool Scene::shadowtrace(Ray &ray, double tlimit)
 	return false;
 }
 
-vec3 Scene::ReflectionVector(vec3 vector, vec3 normal)
+vec3 Scene::SpecularVector(vec3 vector, vec3 normal)
 {
 	return -vector + dot(vector, normal) * 2 * normal;
+}
+
+vec3 Scene::ReflectionVector(vec3 vector, vec3 normal)
+{
+	return vector - dot(vector, normal) * 2 * normal;
 }
 
 vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndex)
@@ -240,11 +271,11 @@ vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndex)
 	vec3 newNormal = normal;
 	if (cosI < 0) {
 		// Entering the object
-	 	n = 1.0003/refractIndex;
+		n = 1.0003/refractIndex;
 	} else {
 		// Exiting the object
 		n = refractIndex/1.0003;
-	 	newNormal = -normal;
+		newNormal = -normal;
 	}
 
 	cosI = dot(incident, newNormal);
@@ -257,6 +288,42 @@ vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndex)
 	} else {
 		return (n * incident) + (n * cosI + sqrtf(snellRoot)) * newNormal;
 	}
+}
+
+//http://pathtracing.wordpress.com/2011/03/03/cosine-weighted-hemisphere/
+vec3 Scene::CosineWeightedRandomHemisphereDirection(vec3 n)
+{
+    float Xi1 = (float)rand()/(float)RAND_MAX;
+    float Xi2 = (float)rand()/(float)RAND_MAX;
+
+    float theta = acos(sqrt(1.0-Xi1));
+    float phi = 2.0 * nv_pi * Xi2;
+
+    float xs = sinf(theta) * cosf(phi);
+    float ys = cosf(theta);
+    float zs = sinf(theta) * sinf(phi);
+
+    vec3 y = vec3(n.x, n.y, n.z);
+    vec3 h = y;
+    if (fabs(h.x)<=fabs(h.y) && fabs(h.x)<=fabs(h.z))
+        h.x= 1.0;
+    else if (fabs(h.y)<=fabs(h.x) && fabs(h.y)<=fabs(h.z))
+        h.y= 1.0;
+    else
+        h.z= 1.0;
+
+
+    vec3 x, z;
+    x = h ^ y ;
+    x.normalize();
+
+	z = x ^ y;
+	z.normalize();
+
+    vec3 direction = xs * x + ys * y + zs * z;
+    direction.normalize();
+
+    return direction;
 }
 
 /* Predefined scenes */
@@ -273,6 +340,7 @@ float frand()
 	return f;
 }
 
+// All primitives
 const void Scene::createScene1(Camera *camera)
 {
 	TransformStack *stack;
@@ -283,46 +351,83 @@ const void Scene::createScene1(Camera *camera)
 	Colour cl;
 	Material *m;
 
+	vec4 p;
+
 	camera->eyePosition = vec3(0.0, -2.0, 10.0);
-	camera->lookAt = vec3(0.0, 0.0, -8.0);
+	camera->lookAt = vec3(0.0, 0.0, 4.0);
 
 	// Transformations
 	stack = new TransformStack();
 	stack->pushMatrix();
-	//stack->applyScaleTransform(vec3(2.0, 1.0, 2.0));
+	stack->setIdentityMatrix();
 
-	/* Create and add a directional light to the scene
+	// Create and add a directional light to the scene
 	v = vec3(-1.0, -1.0, -2.0);
 	cl.set(2.0, 2.0, 2.0, 2.0);
 	dl = new DirectionalLight(v, cl);
-	this->addLight(*dl);*/
+	this->addLight(*dl);
 
-	// Create and add point lights to the scene
-	vec4 lightPosition = vec4(-3.0, 3.0, -9.0, 1.0);
-	cl.set(1.0, 1.0, 0.2, 1.0);
-	pl = new PointLight(lightPosition, cl);
-	this->addLight(*pl);
+	// Create a pyramid
+	Triangle *t1, *t2, *t3;
 
-	// Create and add the glass sphere
-	Sphere *glassSphere;
-	vec4 p;
-	p = vec4(0.0, -3.0, -4.0, 1.0);
-	glassSphere = new Sphere(p, 2.0);
-	invert(glassSphere->inverseTransformation, stack->copyCurrentMatrix());
+	vec4 pTop, pLeft, pRight, pFront;
+	pTop = vec4(0.0, -3.0, -2.0, 1.0);
+	pLeft = vec4(2.0, -5.0, -4.0, 1.0);
+	pRight = vec4(-2.0, -5.0, -4.0, 1.0);
+	pFront = vec4(0.0, -5.0, 0.0, 1.0);
+
+	t1 = new Triangle(pRight, pLeft, pTop);
+	t2 = new Triangle(pFront, pLeft, pTop);
+	t3 = new Triangle(pRight, pFront, pTop);
+
+	invert(t1->inverseTransformation, stack->copyCurrentMatrix());
+	invert(t2->inverseTransformation, stack->copyCurrentMatrix());
+	invert(t3->inverseTransformation, stack->copyCurrentMatrix());
+
 	m = new Material();
-	m->generateGlassMaterial();
-	glassSphere->setMaterial(m);
-	this->addObject(*glassSphere);
+	m->generateGreenColour();
+	t1->setMaterial(m);
+	t2->setMaterial(m);
+	t3->setMaterial(m);
 
-	// Create and add the shiny red sphere behind 
+	this->addObject(*t1);
+	this->addObject(*t2);
+	this->addObject(*t3);
+
+	// Create and add a sphere
 	Sphere *redSphere;
 	p = vec4(4.0, -3.0, -14.0, 1.0);
 	redSphere = new Sphere(p, 2.0);
 	invert(redSphere->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
-	m->generateShinyRedMaterial();
+	m->generateShinyRedColour();
 	redSphere->setMaterial(m);
 	this->addObject(*redSphere);
+
+//	stack->applyScaleTransform(vec3(3.0, 3.0, 3.0));
+	//stack->applyTranslateTransform(vec3(0.0, 3.0, 0.0));
+
+	// Create and add a sphere
+	Sphere *blueSphere;
+	p = vec4(-4.0, -3.0, -14.0, 1.0);
+	blueSphere = new Sphere(p, 2.0);
+	invert(blueSphere->inverseTransformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateBlueColour();
+	blueSphere->setMaterial(m);
+	this->addObject(*blueSphere);
+
+	// Create and add the glass sphere
+	/*Sphere *glassSphere;
+	p = vec4(0.0, -3.0, 0.0, 1.0);
+	glassSphere = new Sphere(p, 2.0);
+	invert(glassSphere->inverseTransformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateGlassMaterial();
+	glassSphere->setMaterial(m);
+	this->addObject(*glassSphere);*/
+
+//	stack->setIdentityMatrix();
 
 	// Add plane bottom
 	Plane *bottomPlane;
@@ -333,15 +438,60 @@ const void Scene::createScene1(Camera *camera)
 	m->generateWhiteColour();
 	bottomPlane->setMaterial(m);
 	this->addObject(*bottomPlane);
+}
 
-	/* Add a cylinder
-	Cylinder *cylinder;
-	vec4 bottom = vec4(-4.0, -3.0, -14.0, 1.0);
-	vec4 top = vec4(2.0, 2.0, -14.0, 1.0);
-	cylinder = new Cylinder(bottom, top, 5.0f);
-	invert(cylinder->inverseTransformation, stack->copyCurrentMatrix());
+// All primitives, reflective floor
+const void Scene::createScene2(Camera *camera)
+{
+	PointLight *pl;
+	TransformStack *stack;
+
+	Colour cl;
+	Material *m;
+
+	vec4 p;
+
+	camera->eyePosition = vec3(4.0, 4.0, 12.0);
+	camera->lookAt = vec3(4.0, -2.0, 10.0);
+
+	// Transformations
+	stack = new TransformStack();
+	stack->pushMatrix();
+	stack->setIdentityMatrix();
+
+	// Create and add point lights to the scene
+	vec4 lightPosition = vec4(0.0, 3.0, -9.0, 1.0);
+	cl.setRGBA(46.0f, 204.0f, 64.0f, 255.0f);
+	cl.setScale(1.0f);
+	pl = new PointLight(lightPosition, cl);
+	this->addLight(*pl);
+
+
+	for (int i =0; i <= 5; i++) {
+		for (int j = 0; j <= 7; j++) {
+			if (j == 3 && i == 6) {
+				continue;
+			} else {
+				// Create and add a sphere
+				Sphere *redSphere;
+				p = vec4(i*2.1, -3.0, j *-2.1, 1.0);
+				redSphere = new Sphere(p, 1.0);
+				invert(redSphere->inverseTransformation, stack->copyCurrentMatrix());
+				m = new Material();
+				m->generateShinyRedColour();
+				redSphere->setMaterial(m);
+				this->addObject(*redSphere);
+			}
+		}
+	}
+
+	// Add plane bottom
+	Plane *bottomPlane;
+	p = vec4(0.0, 1.0, 0.0, 1.0);
+	bottomPlane = new Plane(p, 5.0);
+	invert(bottomPlane->inverseTransformation, stack->copyCurrentMatrix());
 	m = new Material();
-	m->generateShinyRedMaterial();
-	cylinder->setMaterial(m);
-	this->addObject(*cylinder);*/
+	m->generateWhiteColour();
+	bottomPlane->setMaterial(m);
+	this->addObject(*bottomPlane);
 }

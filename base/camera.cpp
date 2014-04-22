@@ -13,13 +13,14 @@ void Camera::calculateUVW()
 	cross(cameraRight, cameraDirection, upVector);
 	cameraRight.normalize();
 	cross(cameraUp, cameraRight, cameraDirection);
+	cameraUp.normalize();
 }
 
 Camera::Camera()
 {
 	eyePosition = vec4(0.0, 0.0, 0.0, 1.0);
- 	lookAt = vec3(0.0, 0.0, -1.0);
- 	upVector = vec3(0.0, -1.0, 0.0);
+ 	lookAt = vec3(0.0, 0.0, -6.0);
+ 	upVector = vec3(0.0, -10.0, 0.0);
 
  	FOV = 40.0f;
 
