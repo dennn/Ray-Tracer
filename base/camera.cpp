@@ -29,7 +29,7 @@ Camera::Camera()
 
 float Camera::FOVToFocusDistance()
 {
-  float radiansFOV = FOV * static_cast<float>(M_PI) / 180.0f;
+  float radiansFOV = FOV * (float)(M_PI) / 180.0f;
 
   return 1.0 / tan(radiansFOV / 2.0);
 

@@ -39,7 +39,7 @@ void Scene::addLight(Light &lt)
 	light_list = &lt;
 }
 
-Colour Scene::raytrace(Ray &ray, int level)
+Colour Scene::raytrace(Ray &ray, int level, Camera *camera)
 {
 	float ta,t;
 	Colour col;
@@ -63,7 +63,6 @@ Colour Scene::raytrace(Ray &ray, int level)
 	closest = (Object *)0;
 	obj = obj_list;
 
-	ray = ray.worldToObjectSpace(obj);
 
 	while (obj != (Object *)0)
 	{
@@ -71,7 +70,6 @@ Colour Scene::raytrace(Ray &ray, int level)
 		{
 			if (hit.t < t)
 			{
-				hit.objectToWorldSpace();
 				closest = hit.obj;
 				t = hit.t;
 				normal = hit.n;
@@ -160,10 +158,8 @@ Colour Scene::raytrace(Ray &ray, int level)
 						float slc = 0.0;
 
 						if (shiny == true) {
-							vec3 lightOffset = vec3(lightPosition - newPosition);
-							lightOffset.normalize();
 
-							vec3 reflectionVector = ReflectionVector(lightOffset, normal);
+							vec3 reflectionVector = ReflectionVector(-xldir, normal);
 							reflectionVector.normalize();
 
 							float slcDot = dot(viewerDirection, reflectionVector);
@@ -197,7 +193,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 
 				reflectedRay.P = newReflectionPosition;
 
-				Colour reflectedColour = raytrace(reflectedRay, level-1);
+				Colour reflectedColour = raytrace(reflectedRay, level-1, camera);
 				reflectedColour *= kr;
 
 				col.red += reflectedColour.red;
@@ -217,7 +213,7 @@ Colour Scene::raytrace(Ray &ray, int level)
 				newRefractionPosition += refractionDSmall;
 				refractedRay.P = newRefractionPosition;
 
-				Colour refractedColour = raytrace(refractedRay, level -1);
+				Colour refractedColour = raytrace(refractedRay, level -1, camera);
 				refractedColour *= kt;
 
 				col.red += refractedColour.red;
@@ -225,6 +221,9 @@ Colour Scene::raytrace(Ray &ray, int level)
 				col.green += refractedColour.green;
 			}
 		}
+	} else {
+		// We didn't hit anything return the background colour
+		col = camera->backgroundColour;
 	}
 
 	return col;
@@ -349,30 +348,31 @@ const void Scene::createScene1(Camera *camera)
 
 	vec4 p;
 
-	camera->eyePosition = vec3(0.0, 0.0, 10.0);
-	camera->lookAt = vec3(0.0, 0.0, 8.0);
-
+	camera->eyePosition = vec3(3.0, 2.0, 8.0);
+	camera->lookAt = vec3(0.0, 0.0, -3.0);
 	camera->calculateUVW();
+	cl.setRGBA(51.0f, 153.0f, 255.0f, 255.0f);
+//	camera->backgroundColour = cl;
 
 	// Transformations
 	stack = new TransformStack();
 	stack->pushMatrix();
-	stack->setIdentityMatrix();
+	//stack->applyScaleTransform(vec3(2.0, 2.0, 2.0));
 
 	// Create and add a directional light to the scene
-	v = vec3(-1.0, -1.0, -2.0);
+/*	v = vec3(-1.0, -1.0, -2.0);
 	cl.set(2.0, 2.0, 2.0, 2.0);
 	dl = new DirectionalLight(v, cl);
-	this->addLight(*dl);
+	this->addLight(*dl);*/
 
 	// Create and add point lights to the scene
-/*	vec4 lightPosition = vec4(0.0, 4.0, -8.0, 1.0);
+	vec4 lightPosition = vec4(8.0, 4.0, -8.0, 1.0);
 	vec3 lightDirection = vec3(0.0, -1.0, 0.0);
 	cl.setRGBA(46.0f, 204.0f, 64.0f, 255.0f);
 	cl.setScale(1.0f);
 	pl = new PointLight(lightPosition, cl);
 	//pl = new PointLight(lightPosition, lightDirection, cl);
-	this->addLight(*pl);*/
+	this->addLight(*pl);
 
 	//Create a pyramid
 	Triangle *t1, *t2, *t3;
@@ -387,9 +387,9 @@ const void Scene::createScene1(Camera *camera)
 	t2 = new Triangle(pFront, pLeft, pTop);
 	t3 = new Triangle(pRight, pFront, pTop);
 
-	invert(t1->inverseTransformation, stack->copyCurrentMatrix());
-	invert(t2->inverseTransformation, stack->copyCurrentMatrix());
-	invert(t3->inverseTransformation, stack->copyCurrentMatrix());
+	t1->transformation = stack->copyCurrentMatrix();
+	t2->transformation = stack->copyCurrentMatrix();
+	t3->transformation = stack->copyCurrentMatrix();
 
 	m = new Material();
 	m->generateGreenColour();
@@ -405,7 +405,7 @@ const void Scene::createScene1(Camera *camera)
 	Sphere *redSphere;
 	p = vec4(4.0, -3.0, -14.0, 1.0);
 	redSphere = new Sphere(p, 2.0);
-	invert(redSphere->inverseTransformation, stack->copyCurrentMatrix());
+	redSphere->transformation = stack->copyCurrentMatrix();
 	m = new Material();
 	m->generateShinyRedColour();
 	redSphere->setMaterial(m);
@@ -418,27 +418,29 @@ const void Scene::createScene1(Camera *camera)
 	Sphere *blueSphere;
 	p = vec4(-4.0, -3.0, -14.0, 1.0);
 	blueSphere = new Sphere(p, 2.0);
-	invert(blueSphere->inverseTransformation, stack->copyCurrentMatrix());
+	blueSphere->transformation = stack->copyCurrentMatrix();
 	m = new Material();
 	m->generateBlueColour();
 	blueSphere->setMaterial(m);
 	this->addObject(*blueSphere);
 
 	// Create and add the glass sphere
-	Sphere *glassSphere;
+/*	Sphere *glassSphere;
 	p = vec4(0.0, -3.0, 0.0, 1.0);
 	glassSphere = new Sphere(p, 2.0);
-	invert(glassSphere->inverseTransformation, stack->copyCurrentMatrix());
+	invert(glassSphere->transformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateGlassMaterial();
 	glassSphere->setMaterial(m);
-	this->addObject(*glassSphere);
+	this->addObject(*glassSphere);*/
+
+	stack->setIdentityMatrix();
 
 	// Add plane bottom
 	Plane *bottomPlane;
-	p = vec4(0.0, 1.0, 0.0, 1.0);
-	bottomPlane = new Plane(p, 5.0);
-	invert(bottomPlane->inverseTransformation, stack->copyCurrentMatrix());
+	vec3 pNormal = vec3(0.0, 1.0, 0.0);
+	bottomPlane = new Plane(pNormal, 5.0);
+	bottomPlane->transformation = stack->copyCurrentMatrix();
 	m = new Material();
 	m->generateWhiteColour();
 	bottomPlane->setMaterial(m);
@@ -448,7 +450,7 @@ const void Scene::createScene1(Camera *camera)
 // All primitives, reflective floor
 const void Scene::createScene2(Camera *camera)
 {
-	PointLight *pl;
+	DirectionalLight *dl;
 	TransformStack *stack;
 
 	Colour cl;
@@ -456,20 +458,21 @@ const void Scene::createScene2(Camera *camera)
 
 	vec4 p;
 
-	camera->eyePosition = vec3(4.0, 4.0, 12.0);
-	camera->lookAt = vec3(4.0, -2.0, 10.0);
+	camera->eyePosition = vec3(4.0, 8.0, 12.0);
+	camera->lookAt = vec3(4.0, 2.0, 0.0);
+
+	camera->calculateUVW();
 
 	// Transformations
 	stack = new TransformStack();
 	stack->pushMatrix();
-	stack->setIdentityMatrix();
+	//stack->applyScaleTransform(vec3(1.0, 1.0, 1.0));
 
-	// Create and add point lights to the scene
-	vec4 lightPosition = vec4(0.0, 3.0, -9.0, 1.0);
-	cl.setRGBA(46.0f, 204.0f, 64.0f, 255.0f);
-	cl.setScale(1.0f);
-	pl = new PointLight(lightPosition, cl);
-	this->addLight(*pl);
+	// Create and add a directional light to the scene
+	vec3 v = vec3(-1.0, -1.0, -2.0);
+	cl.set(2.0, 2.0, 2.0, 2.0);
+	dl = new DirectionalLight(v, cl);
+	this->addLight(*dl);
 
 
 	for (int i =0; i <= 5; i++) {
@@ -479,24 +482,64 @@ const void Scene::createScene2(Camera *camera)
 			} else {
 				// Create and add a sphere
 				Sphere *redSphere;
-				p = vec4(i*2.1, -3.0, j *-2.1, 1.0);
+				p = vec4(i*2.1, 2.0, j *-2.1, 1.0);
 				redSphere = new Sphere(p, 1.0);
-				invert(redSphere->inverseTransformation, stack->copyCurrentMatrix());
+				invert(redSphere->transformation, stack->copyCurrentMatrix());
 				m = new Material();
-				m->generateShinyRedColour();
+				m->generateGreenColour();
 				redSphere->setMaterial(m);
 				this->addObject(*redSphere);
 			}
 		}
 	}
 
+	stack->setIdentityMatrix();
+
 	// Add plane bottom
 	Plane *bottomPlane;
-	p = vec4(0.0, 1.0, 0.0, 1.0);
-	bottomPlane = new Plane(p, 5.0);
-	invert(bottomPlane->inverseTransformation, stack->copyCurrentMatrix());
+	vec3 pNormal = vec3(0.0, 1.0, 0.0);
+	bottomPlane = new Plane(pNormal, 5.0);
+	invert(bottomPlane->transformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateWhiteColour();
 	bottomPlane->setMaterial(m);
 	this->addObject(*bottomPlane);
 }
+
+// All primitives, reflective floor
+const void Scene::createScene3(Camera *camera)
+{
+	PointLight *pl, *pl2;
+	TransformStack *stack;
+
+	Colour cl;
+	Material *m;
+
+	vec4 p;
+
+	camera->eyePosition = vec3(0.0, 0.0, 12.0);
+	camera->lookAt = vec3(0.0, 0.0, 0.0);
+
+	camera->calculateUVW();
+
+	// Transformations
+	stack = new TransformStack();
+	stack->pushMatrix();
+
+	// Create and add point lights to the scene
+	vec4 lightPosition = vec4(0.0, 3.0, -9.0, 1.0);
+	cl.setRGBA(255.0f, 51.0f, 51.0f, 255.0f);
+	pl = new PointLight(lightPosition, cl);
+	this->addLight(*pl);
+
+	// Add plane bottom
+	Plane *bottomPlane;
+	vec3 pNormal = vec3(0.0, 1.0, 0.0);
+	bottomPlane = new Plane(pNormal, 2.0);
+	invert(bottomPlane->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateWhiteColour();
+	bottomPlane->setMaterial(m);
+	this->addObject(*bottomPlane);
+}
+

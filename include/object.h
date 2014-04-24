@@ -25,7 +25,7 @@ class Object {
   		virtual bool intersect(Ray &ray, Hit *h) { return false; }
   		virtual bool sintersect(Ray &ray, Hit *h, double tl);
 
-  		mat4 inverseTransformation;
+  		mat4 transformation;
 };
 
 #endif

@@ -12,10 +12,8 @@ Hit::Hit(void)
 void Hit::objectToWorldSpace()
 {
 	vec4 newPosition, oldPosition;
-	mat4 transformation;
 	oldPosition = vec4(p.x, p.y, p.z, 1);
-	invert(transformation, obj->inverseTransformation);
-	mult(newPosition, transformation , oldPosition);
+	mult(newPosition, obj->transformation , oldPosition);
 
 	p.x = newPosition.x;
 	p.y = newPosition.y;
@@ -25,7 +23,8 @@ void Hit::objectToWorldSpace()
 	vec4 newNormal, vec4OldNormal;
 	mat4 transformTranspose;
 	vec4OldNormal = vec4(n.x, n.y, n.z, 0);
-	transpose(transformTranspose, obj->inverseTransformation);
+	invert(transformTranspose, obj->transformation);
+	transpose(transformTranspose);
 	mult(newNormal, transformTranspose, vec4OldNormal);
 	normalize(newNormal);
 

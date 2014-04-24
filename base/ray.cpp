@@ -30,9 +30,11 @@ Ray Ray::worldToObjectSpace(Object *obj)
 	vec4 originalDirection = vec4(D.x, D.y, D.z, 0);
 
 	vec4 newPosition;
-	mult(newPosition, obj->inverseTransformation, originalPosition);
+	mat4 inverseTransformation;
+	invert(inverseTransformation, obj->transformation);
+	mult(newPosition, inverseTransformation, originalPosition);
 	vec4 newDirection;
-	mult(newDirection,obj->inverseTransformation, originalDirection);
+	mult(newDirection, inverseTransformation, originalDirection);
 
 	Ray newRay;
 	newRay.P.x = newPosition.x;

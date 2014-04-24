@@ -5,6 +5,8 @@
 #include "libs/nv_mathdecl.h"
 #include "libs/nv_algebra.h"
 
+#include "include/colour.h"
+
 class Camera {
 	private: 
 	 vec3 upVector;
@@ -21,6 +23,8 @@ class Camera {
 
 		void calculateUVW(); 	
 		float FOVToFocusDistance();	
+
+		Colour backgroundColour;
 };
 
 #endif

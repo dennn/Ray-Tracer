@@ -18,8 +18,6 @@ Triangle::Triangle(vec4 &pv0, vec4 &pv1, vec4 &pv2)
 bool Triangle::intersect(Ray &ray, Hit *hit)
 {
 	vec3 e1, e2, normal;
-	vec3 rayDirection = ray.getDirection();
-	vec4 rayPosition = ray.getPosition();
 
 	e1 = vec3(v1.x - v0.x, v1.y - v0.y, v1.z - v0.z);
 	e2 = vec3(v2.x - v0.x, v2.y - v0.y, v2.z - v0.z);
@@ -28,7 +26,7 @@ bool Triangle::intersect(Ray &ray, Hit *hit)
 	normal.normalize();
 
 	vec3 pVector;
-	cross(pVector, rayDirection, e2);
+	cross(pVector, ray.D, e2);
 	double determinant = dot(e1, pVector);
 
 	if (fabs(determinant) < FLOAT_ZERO) {
@@ -37,7 +35,7 @@ bool Triangle::intersect(Ray &ray, Hit *hit)
 
 	double invertedDeterminant = 1.0/determinant;
 
-	vec3 tVector = vec3(rayPosition.x - v0.x, rayPosition.y - v0.y, rayPosition.z - v0.z);
+	vec3 tVector = vec3(ray.P.x - v0.x, ray.P.y - v0.y, ray.P.z - v0.z);
 
 	double lambda = dot(tVector, pVector);
 	lambda *= invertedDeterminant;
@@ -49,7 +47,7 @@ bool Triangle::intersect(Ray &ray, Hit *hit)
 	vec3 qVector;
 	cross(qVector, tVector, e1);
 
-	double mue = dot(rayDirection, qVector);
+	double mue = dot(ray.D, qVector);
 	mue *= invertedDeterminant;
 
 	if (mue < 0.0 || mue + lambda > 1.0) {

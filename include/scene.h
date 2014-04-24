@@ -20,7 +20,7 @@ class Scene {
 		Scene(void);
   		void addObject(Object &obj);
   		void addLight(Light &light);
-  		Colour raytrace(Ray &ray, int level);
+  		Colour raytrace(Ray &ray, int level, Camera* camera);
   		bool shadowtrace(Ray &ray, double tlimit);
 
       vec3 ReflectionVector(vec3 vector, vec3 normal);
@@ -30,6 +30,7 @@ class Scene {
 
       const void createScene1(Camera *camera);
       const void createScene2(Camera *camera);
+      const void createScene3(Camera *camera);
 
       vec3 CosineWeightedRandomHemisphereDirection(vec3 normal);
 };

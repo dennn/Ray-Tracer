@@ -3,7 +3,7 @@
 
 #include "include/plane.h"
 
-Plane::Plane(vec4 &pNormal, float pDistance)
+Plane::Plane(vec3 &pNormal, float pDistance)
 {
 	normal = pNormal;
 	distance = pDistance;
@@ -11,19 +11,17 @@ Plane::Plane(vec4 &pNormal, float pDistance)
 
 /** 
  * Plane intersection test
- * Inspired by: http://blogs.warwick.ac.uk/nickforrington/entry/raytracing_intersection_with
+ * Inspired by: 	
  */
 bool Plane::intersect(Ray &ray, Hit *hit)
-{
-	vec3 normalVector = vec3(normal.x, normal.y, normal.z);
-	
-	double cosineRay = dot(normalVector, ray.D);
+{	
+	double cosineRay = dot(normal, ray.D);
 
 	if (fabs(cosineRay) < FLOAT_ZERO) {
 		return false;
 	}
 
-	double _distance = -(dot(ray.P, normalVector) + distance) / cosineRay;
+	double _distance = -(dot(ray.P, normal) + distance) / cosineRay;
 
 	if (_distance < 0.0) {
 		return false;

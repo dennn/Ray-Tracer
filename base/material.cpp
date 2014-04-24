@@ -27,9 +27,9 @@ const void Material::generateWhiteColour()
 	kd.red = 1.0;
 	kd.green = 1.0;
 	kd.blue = 1.0;
-	kr.red =  0.3;
-	kr.green = 0.3;
-	kr.blue = 0.3;
+	kr.red =  0.8;
+	kr.green = 0.8;
+	kr.blue = 0.8;
 	ks.red = 0.5;
 	ks.green = 0.5;
 	ks.blue = 0.5;
@@ -55,16 +55,16 @@ const void Material::generateGreenColour()
 	kr.red =  0.0;
 	kr.green = 0.0;
 	kr.blue = 0.0;
-	ks.red = 0.0;
-	ks.green = 0.0;
-	ks.blue = 0.0;
+	ks.red = 0.8;
+	ks.green = 0.8;
+	ks.blue = 0.8;
 	kt.red = 0.0;
 	kt.green = 0.0;
 	kt.blue = 0.0;
-	n = 50.0;
+	n = 5.0;
 	refractiveIndex = 0.0;
 
-	shiny = false;
+	shiny = true;
 	reflective = false;
 	refractive = false;
 }
@@ -102,9 +102,9 @@ const void Material::generateBlueColour()
 	kd.red = 0.0;
 	kd.green = 0.0;
 	kd.blue = 0.8;
-	kr.red =  0.0;
-	kr.green = 0.0;
-	kr.blue = 0.0;
+	kr.red =  0.5;
+	kr.green = 0.5;
+	kr.blue = 0.5;
 	ks.red = 1.0;
 	ks.green = 1.0;
 	ks.blue = 1.0;
@@ -115,7 +115,7 @@ const void Material::generateBlueColour()
 	refractiveIndex = 0.0;
 
 	shiny = true;
-	reflective = false;
+	reflective = true;
 	refractive = false;
 }
 

@@ -3,3 +3,4 @@ CompGraphics.sublime-project
 *.o
 *.ppm
 raytrace
+*.png
