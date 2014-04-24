@@ -11,7 +11,7 @@
 
 #define XSIZE 512
 #define YSIZE 512
-#define ANTIALIASING_SAMPLES 6
+#define ANTIALIASING_SAMPLES 4
 
 #define RAND (float(rand())/float(RAND_MAX))
 
@@ -78,6 +78,7 @@ int main(int argc, const char *argv[])
 
 	// RAYTRACE SCENE
 
+	#pragma omp parallel for private(x)
 	for(y=0;y<YSIZE;y+=1)
 	{
 		for(x=0;x<XSIZE;x+=1)

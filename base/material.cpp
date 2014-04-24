@@ -52,9 +52,9 @@ const void Material::generateGreenColour()
 	kd.red = 0.0;
 	kd.green = 0.8;
 	kd.blue = 0.0;
-	kr.red =  0.0;
-	kr.green = 0.0;
-	kr.blue = 0.0;
+	kr.red =  0.5;
+	kr.green = 0.5;
+	kr.blue = 0.5;
 	ks.red = 0.8;
 	ks.green = 0.8;
 	ks.blue = 0.8;

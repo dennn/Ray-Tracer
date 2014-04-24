@@ -1,10 +1,10 @@
 OBJS = raytrace.o base/scene.o base/colour.o base/material.o base/ray.o base/hit.o base/camera.o base/transformStack.o objects/object.o objects/sphere.o objects/triangle.o objects/plane.o objects/cylinder.o lights/light.o lights/directional_light.o lights/point_light.o libs/nv_algebra.o
 
 raytrace: $(OBJS) 
-	g++ -o raytrace $(OBJS) -lm -g
+	g++ -o raytrace $(OBJS) -lm -g -fopenmp	
 
 .cpp.o:
-	g++ -g -c -O -I. $< -o $@
+	g++ -g -c -O -I. $< -o $@ -fopenmp
 
 raytrace.o: include/scene.h include/sphere.h include/plane.h include/directional_light.h include/camera.h
 

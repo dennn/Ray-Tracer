@@ -18,8 +18,8 @@
 // Transform Stack
 #include "include/transformStack.h"
 
-#define AMBIENT_OCCLUSION false
-#define AMBIENT_OCCLUSION_SAMPLES 256
+#define AMBIENT_OCCLUSION true
+#define AMBIENT_OCCLUSION_SAMPLES 16
 
 Scene::Scene()
 {
@@ -97,7 +97,7 @@ Colour Scene::raytrace(Ray &ray, int level, Camera *camera)
 				Ray ambientRay;
 				ambientRay.D = CosineWeightedRandomHemisphereDirection(normal);
 				ambientRay.P = newPosition;
-				if (shadowtrace(ambientRay, t) == true) {
+				if (shadowtrace(ambientRay, 100) == true) {
 					numHits++;
 				}
 			}
@@ -458,10 +458,11 @@ const void Scene::createScene2(Camera *camera)
 
 	vec4 p;
 
-	camera->eyePosition = vec3(4.0, 8.0, 12.0);
-	camera->lookAt = vec3(4.0, 2.0, 0.0);
-
+	camera->eyePosition = vec3(6.0, 2.0, 12.0);
+	camera->lookAt = vec3(3.0, 2.0, 0.0);
 	camera->calculateUVW();
+	cl.setRGBA(173.0f, 223.0f, 229.0f, 255.0f);
+	camera->backgroundColour = cl;
 
 	// Transformations
 	stack = new TransformStack();
