@@ -19,11 +19,14 @@ class Material {
       const void generateBlueColour();
 
       const void generateGlassMaterial();
+      const void generateMirrorColour();
 
       const void generateShinyRedColour();
       const void generateShinyWhiteColour();
       const void generateShinyYellowColour();
       const void generateShinyBlackColour();
+
+      const void generateSandColour();
 
   		bool shiny;
   		bool reflective;

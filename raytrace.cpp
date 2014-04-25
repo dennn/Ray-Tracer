@@ -71,7 +71,8 @@ int main(int argc, const char *argv[])
 	// Create a new scene to render
 	scene = new Scene();
 //	scene->createSnookerScene(camera);
-	scene->createTransparentScene(camera);
+//	scene->createTransparentScene(camera);
+	scene->createPyramidScene(camera);
 
 	float focusDistance = camera->FOVToFocusDistance();
 	float sampleWeight = 1.0f / (ANTIALIASING_SAMPLES * ANTIALIASING_SAMPLES);

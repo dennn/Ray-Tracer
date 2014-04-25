@@ -790,3 +790,71 @@ const void Scene::createTransparentScene(Camera *camera)
 	this->addObject(*bottomPlane);
 }
 
+const void Scene::createPyramidScene(Camera *camera)
+{
+	TransformStack *stack;
+	vec3 v, v2;
+	DirectionalLight *dl;
+	PointLight *pl;
+
+	Colour cl;
+	Material *m;
+
+	vec4 p;
+
+	camera->eyePosition = vec3(0.0, 0.0, 8.0);
+	camera->lookAt = vec3(0.0, 0.0, -3.0);
+	camera->calculateUVW();
+	cl.setRGBA(235.0f, 176.0f, 107.0f, 255.0f);
+	camera->backgroundColour = cl;
+
+	// Transformations
+	stack = new TransformStack();
+	stack->pushMatrix();
+
+	//Create a pyramid
+	Triangle *t1, *t2, *t3;
+
+	vec4 pTop, pLeft, pRight, pFront;
+	pTop = vec4(0.0, 5.0, -20.0, 1.0);
+	pLeft = vec4(5.0, -5.0, -25.0, 1.0);
+	pRight = vec4(-5.0, -5.0, -25.0, 1.0);
+	pFront = vec4(0.0, -5.0, -20.0, 1.0);
+
+	t1 = new Triangle(pRight, pLeft, pTop);
+	t2 = new Triangle(pFront, pLeft, pTop);
+	t3 = new Triangle(pRight, pFront, pTop);
+
+	t1->transformation = stack->copyCurrentMatrix();
+	t2->transformation = stack->copyCurrentMatrix();
+	t3->transformation = stack->copyCurrentMatrix();
+
+	m = new Material();
+	m->generateSandColour();
+	t1->setMaterial(m);
+	t2->setMaterial(m);
+	t3->setMaterial(m);
+
+	this->addObject(*t1);
+	this->addObject(*t2);
+	this->addObject(*t3);
+
+	// Create and add a directional light to the scene
+	vec4 lightPosition = vec4(0.0, 5.0, 0.0, 1.0);
+	vec3 lightDirection = vec3(0.0, 1.0, -1.0);
+	cl.setRGBA(255.0f, 255.0f, 204.0f, 255.0f);
+	pl = new PointLight(lightPosition, cl);
+	this->addLight(*pl);
+
+	// Add plane bottom
+	Plane *bottomPlane;
+	vec3 pNormal = vec3(0.0, 1.0, 0.0);
+	bottomPlane = new Plane(pNormal, 6.0);
+	invert(bottomPlane->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateSandColour();
+	bottomPlane->setMaterial(m);
+	this->addObject(*bottomPlane);
+
+}
+

@@ -33,6 +33,7 @@ class Scene {
       const void createScene3(Camera *camera);
       const void createSnookerScene(Camera *camera);
       const void createTransparentScene(Camera *camera);
+      const void createPyramidScene(Camera *camera);
 
       vec3 CosineWeightedRandomHemisphereDirection(vec3 normal);
 };

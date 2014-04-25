@@ -252,3 +252,55 @@ const void Material::generateShinyBlackColour()
 	reflective = true;
 	refractive = false;
 }
+
+const void Material::generateMirrorColour()
+{
+	ka.red = 0.0;
+	ka.green = 0.0;
+	ka.blue = 0.0;
+	kd.red = 0.0;
+	kd.green = 0.0;
+	kd.blue = 0.0;
+	kr.red =  1.0;
+	kr.green = 1.0;
+	kr.blue = 1.0;
+	ks.red = 0.5;
+	ks.green = 0.5;
+	ks.blue = 0.5;
+	kt.red = 0.0;
+	kt.green = 0.0;
+	kt.blue = 0.0;
+	n = 10.0;
+	refractiveIndex = 0.0;
+
+	shiny = true;
+	reflective = true;
+	refractive = false;
+}
+
+const void Material::generateSandColour()
+{
+	//	245 208 143
+	ka.red = 0.15;
+	ka.green = 0.10;
+	ka.blue = 0.07;
+	kd.red = 0.96;
+	kd.green = 0.815;
+	kd.blue = 0.561;
+	kr.red =  1.0;
+	kr.green = 1.0;
+	kr.blue = 1.0;
+	ks.red = 0.5;
+	ks.green = 0.5;
+	ks.blue = 0.5;
+	kt.red = 0.0;
+	kt.green = 0.0;
+	kt.blue = 0.0;
+	n = 10.0;
+	refractiveIndex = 0.0;
+
+	shiny = false;
+	reflective = false;
+	refractive = false;
+}
+
