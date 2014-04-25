@@ -49,7 +49,7 @@ void PointLight::getLightProperties(vec4 &pos, vec3 *ldir, Colour *i)
 	float spotFactor;
 	if (spotLight == true) {
 		spotFactor = dot(rayDirection, direction);
-		pow(spotFactor, 80);
+		spotFactor = (1.0 - (1.0 - spotFactor));
 	} else {
 		spotFactor = 1;
 	}
@@ -57,7 +57,6 @@ void PointLight::getLightProperties(vec4 &pos, vec3 *ldir, Colour *i)
 	// Calculates the length using sqrt(x^2 + y^2 + z^2)
 	float distance = nv_norm(rayDirection);
 
-	// the direction is always the same (light is infinitely far away)
 	ldir->x = rayDirection.x;
 	ldir->y = rayDirection.y;
 	ldir->z = rayDirection.z;

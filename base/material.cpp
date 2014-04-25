@@ -64,7 +64,7 @@ const void Material::generateGreenColour()
 	n = 5.0;
 	refractiveIndex = 0.0;
 
-	shiny = true;
+	shiny = false;
 	reflective = false;
 	refractive = false;
 }
@@ -183,15 +183,65 @@ const void Material::generateShinyRedColour()
 	ka.red = 0.123;
 	ka.green = 0.023;
 	ka.blue = 0.123;
-	kd.red = 0.812;
-	kd.green = 0.012;
-	kd.blue = 0.812;
-	kr.red =  0.5;
-	kr.green = 0.5;
-	kr.blue = 0.5;
-	ks.red = 1.0;
-	ks.green = 1.0;
-	ks.blue = 1.0;
+	kd.red = 0.72;
+	kd.green = 0.10;
+	kd.blue = 0.019;
+	kr.red =  0.1;
+	kr.green = 0.1;
+	kr.blue = 0.1;
+	ks.red = 0.5;
+	ks.green = 0.5;
+	ks.blue = 0.5;
+	kt.red = 0.0;
+	kt.green = 0.0;
+	kt.blue = 0.0;
+	n = 10.0;
+	refractiveIndex = 0.0;
+
+	shiny = true;
+	reflective = true;
+	refractive = false;
+}
+
+const void Material::generateShinyYellowColour()
+{
+	ka.red = 0.123;
+	ka.green = 0.023;
+	ka.blue = 0.123;
+	kd.red = 0.97;
+	kd.green = 0.72;
+	kd.blue = 0.10;
+	kr.red =  0.05;
+	kr.green = 0.05;
+	kr.blue = 0.05;
+	ks.red = 0.5;
+	ks.green = 0.5;
+	ks.blue = 0.5;
+	kt.red = 0.0;
+	kt.green = 0.0;
+	kt.blue = 0.0;
+	n = 10.0;
+	refractiveIndex = 0.0;
+
+	shiny = true;
+	reflective = true;
+	refractive = false;
+}
+
+const void Material::generateShinyBlackColour()
+{
+	ka.red = 0.123;
+	ka.green = 0.023;
+	ka.blue = 0.123;
+	kd.red = 0.0;
+	kd.green = 0.0;
+	kd.blue = 0.0;
+	kr.red =  0.05;
+	kr.green = 0.05;
+	kr.blue = 0.05;
+	ks.red = 0.5;
+	ks.green = 0.5;
+	ks.blue = 0.5;
 	kt.red = 0.0;
 	kt.green = 0.0;
 	kt.blue = 0.0;

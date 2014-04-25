@@ -22,6 +22,8 @@ class Material {
 
       const void generateShinyRedColour();
       const void generateShinyWhiteColour();
+      const void generateShinyYellowColour();
+      const void generateShinyBlackColour();
 
   		bool shiny;
   		bool reflective;

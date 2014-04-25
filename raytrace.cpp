@@ -9,9 +9,9 @@
 // Camera
 #include "include/camera.h"
 
-#define XSIZE 512
-#define YSIZE 512
-#define ANTIALIASING_SAMPLES 4
+#define XSIZE 1024
+#define YSIZE 1024
+#define ANTIALIASING_SAMPLES 16
 
 #define RAND (float(rand())/float(RAND_MAX))
 
@@ -70,7 +70,7 @@ int main(int argc, const char *argv[])
 
 	// Create a new scene to render
 	scene = new Scene();
-	scene->createScene2(camera);
+	scene->createScene4(camera);
 //	scene->createScene2(camera);
 
 	float focusDistance = camera->FOVToFocusDistance();

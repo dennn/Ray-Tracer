@@ -17,7 +17,7 @@ class PointLight: public Light {
  	
  	public:
  		PointLight(vec4 &p, Colour &c);
-  		PointLight(vec4 &p, vec3 &d, Colour &c);
+  	PointLight(vec4 &p, vec3 &d, Colour &c);
   		
  		virtual void getLightProperties(vec4 &pos, vec3 *ldir, Colour *i);
 };

@@ -19,7 +19,7 @@
 #include "include/transformStack.h"
 
 #define AMBIENT_OCCLUSION true
-#define AMBIENT_OCCLUSION_SAMPLES 16
+#define AMBIENT_OCCLUSION_SAMPLES 64
 
 Scene::Scene()
 {
@@ -540,6 +540,177 @@ const void Scene::createScene3(Camera *camera)
 	invert(bottomPlane->transformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateWhiteColour();
+	bottomPlane->setMaterial(m);
+	this->addObject(*bottomPlane);
+}
+
+// Point Lights
+const void Scene::createScene4(Camera *camera)
+{
+	PointLight *pl, *pl2;
+	TransformStack *stack;
+
+	Colour cl;
+	Material *m;
+
+	vec4 p;
+
+	camera->eyePosition = vec3(2.0, 6.0, 10.0);
+	camera->lookAt = vec3(2.0, 0.0, -5.0);
+	camera->calculateUVW();
+	cl.setRGBA(255.0f, 255.0f, 255.0f, 255.0f);
+	camera->backgroundColour = cl;
+
+	// Transformations
+	stack = new TransformStack();
+	stack->pushMatrix();
+	stack->setIdentityMatrix();
+
+	// Create and add point lights to the scene
+	vec4 lightPosition = vec4(0.0, 5.0, 0.0, 1.0);
+	vec3 lightDirection = vec3(0.0, 1.0, -1.0);
+	cl.setRGBA(255.0f, 255.0f, 204.0f, 255.0f);
+	pl = new PointLight(lightPosition, cl);
+	this->addLight(*pl);
+
+	// Add the balls row 1
+	Sphere *redSphere;
+	p = vec4(-2.0, 1.0, -5.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyYellowColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(0.0, 1.0, -5.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyYellowColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(2.0, 1.0, -5.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(4.0, 1.0, -5.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyYellowColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(6.0, 1.0, -5.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	// Row 2
+
+	p = vec4(-1.0, 1.0, -6.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(1.0, 1.0, -6.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyYellowColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(3.0, 1.0, -6.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(5.0, 1.0, -6.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyYellowColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	// Row 3
+
+	p = vec4(0.0, 1.0, -7.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyYellowColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(2.0, 1.0, -7.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyBlackColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(4.0, 1.0, -7.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	// Row 4
+
+	p = vec4(1.0, 1.0, -8.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	p = vec4(3.0, 1.0, -8.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyYellowColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	// Row 5
+
+	p = vec4(2.0, 1.0, -9.0, 1.0);
+	redSphere = new Sphere(p, 1.0);
+	invert(redSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+
+	// Add plane bottom
+	Plane *bottomPlane;
+	vec3 pNormal = vec3(0.0, 1.0, 0.0);
+	bottomPlane = new Plane(pNormal, 0.0);
+	invert(bottomPlane->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateGreenColour();
 	bottomPlane->setMaterial(m);
 	this->addObject(*bottomPlane);
 }
