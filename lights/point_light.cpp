@@ -44,12 +44,11 @@ PointLight::PointLight(vec4 &p, vec3 &d, Colour &i)
 void PointLight::getLightProperties(vec4 &pos, vec3 *ldir, Colour *i)
 {
 	vec3 rayDirection = position - pos;
-	rayDirection.normalize();
 
 	float spotFactor;
 	if (spotLight == true) {
 		spotFactor = dot(rayDirection, direction);
-		spotFactor = (1.0 - (1.0 - spotFactor));
+		spotFactor = (1.0 - spotFactor);
 	} else {
 		spotFactor = 1;
 	}

@@ -132,20 +132,20 @@ const void Material::generateGlassMaterial()
 	kd.red = 0.01;
 	kd.green = 0.01;
 	kd.blue = 0.01;
-	kr.red =  0.3;
-	kr.green = 0.3;
-	kr.blue = 0.3;
+	kr.red =  0.1;
+	kr.green = 0.1;
+	kr.blue = 0.1;
 	ks.red = 0.2;
 	ks.green = 0.2;
 	ks.blue = 0.2;
-	kt.red = 1.0;
-	kt.green = 1.0;
-	kt.blue = 1.0;
+	kt.red = 0.6;
+	kt.green = 0.6;
+	kt.blue = 0.6;
 	n = 5.0;
-	refractiveIndex = 1.05;
+	refractiveIndex = 1.5;
 
 	shiny = true;
-	reflective = false;
+	reflective = true;
 	refractive = true;
 }
 

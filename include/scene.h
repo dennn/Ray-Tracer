@@ -31,8 +31,8 @@ class Scene {
       const void createScene1(Camera *camera);
       const void createScene2(Camera *camera);
       const void createScene3(Camera *camera);
-      const void createScene4(Camera *camera);
-
+      const void createSnookerScene(Camera *camera);
+      const void createTransparentScene(Camera *camera);
 
       vec3 CosineWeightedRandomHemisphereDirection(vec3 normal);
 };

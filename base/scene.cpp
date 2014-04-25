@@ -18,8 +18,8 @@
 // Transform Stack
 #include "include/transformStack.h"
 
-#define AMBIENT_OCCLUSION true
-#define AMBIENT_OCCLUSION_SAMPLES 64
+#define AMBIENT_OCCLUSION false
+#define AMBIENT_OCCLUSION_SAMPLES 16
 
 Scene::Scene()
 {
@@ -273,7 +273,7 @@ vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndex)
 		newNormal = -normal;
 	}
 
-	cosI = dot(incident, newNormal);
+	cosI = -dot(incident, newNormal);
 
 	double snellRoot = 1.0 - (n * n) * (1.0 - cosI * cosI);
 
@@ -281,7 +281,7 @@ vec3 Scene::RefractVector(vec3 normal, vec3 incident, double refractIndex)
 		// Total internal reflection
 		return ReflectionVector(newNormal, incident);
 	} else {
-		return (n * incident) + (n * cosI + sqrtf(snellRoot)) * newNormal;
+		return (n * incident) + (n * cosI - sqrtf(snellRoot)) * newNormal;
 	}
 }
 
@@ -533,6 +533,12 @@ const void Scene::createScene3(Camera *camera)
 	pl = new PointLight(lightPosition, cl);
 	this->addLight(*pl);
 
+
+	lightPosition = vec4(0.0, 3.0, -9.0, 1.0);
+	cl.setRGBA(255.0f, 184.0f, 51.0f, 255.0f);
+	pl2 = new PointLight(lightPosition, cl);
+	this->addLight(*pl2);
+
 	// Add plane bottom
 	Plane *bottomPlane;
 	vec3 pNormal = vec3(0.0, 1.0, 0.0);
@@ -545,7 +551,7 @@ const void Scene::createScene3(Camera *camera)
 }
 
 // Point Lights
-const void Scene::createScene4(Camera *camera)
+const void Scene::createSnookerScene(Camera *camera)
 {
 	PointLight *pl, *pl2;
 	TransformStack *stack;
@@ -708,6 +714,75 @@ const void Scene::createScene4(Camera *camera)
 	Plane *bottomPlane;
 	vec3 pNormal = vec3(0.0, 1.0, 0.0);
 	bottomPlane = new Plane(pNormal, 0.0);
+	invert(bottomPlane->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateGreenColour();
+	bottomPlane->setMaterial(m);
+	this->addObject(*bottomPlane);
+}
+
+const void Scene::createTransparentScene(Camera *camera)
+{
+	TransformStack *stack;
+	vec3 v, v2;
+	DirectionalLight *dl;
+	PointLight *pl;
+
+	Colour cl;
+	Material *m;
+
+	vec4 p;
+
+	camera->eyePosition = vec3(0.0, 2.0, 8.0);
+	camera->lookAt = vec3(0.0, 0.0, -3.0);
+	camera->calculateUVW();
+	cl.setRGBA(51.0f, 153.0f, 255.0f, 255.0f);
+//	camera->backgroundColour = cl;
+
+	// Transformations
+	stack = new TransformStack();
+	stack->pushMatrix();
+
+	// Create and add a directional light to the scene
+	v = vec3(-1.0, -1.0, -3.0);
+	cl.set(2.0, 2.0, 2.0, 2.0);
+	dl = new DirectionalLight(v, cl);
+	this->addLight(*dl);
+
+	// Create and add a sphere
+	Sphere *redSphere;
+	p = vec4(4.0, -3.0, -14.0, 1.0);
+	redSphere = new Sphere(p, 2.0);
+	redSphere->transformation = stack->copyCurrentMatrix();
+	m = new Material();
+	m->generateShinyRedColour();
+	redSphere->setMaterial(m);
+	this->addObject(*redSphere);
+
+	// Create and add a sphere
+	Sphere *blueSphere;
+	p = vec4(0.0, 3.0, -14.0, 1.0);
+	blueSphere = new Sphere(p, 2.0);
+	blueSphere->transformation = stack->copyCurrentMatrix();
+	m = new Material();
+	m->generateBlueColour();
+	blueSphere->setMaterial(m);
+	this->addObject(*blueSphere);
+
+	// Create and add the glass sphere
+	Sphere *glassSphere;
+	p = vec4(0.0, -3.0, -6.0, 1.0);
+	glassSphere = new Sphere(p, 2.0);
+	invert(glassSphere->transformation, stack->copyCurrentMatrix());
+	m = new Material();
+	m->generateGlassMaterial();
+	glassSphere->setMaterial(m);
+	this->addObject(*glassSphere);
+
+	// Add plane bottom
+	Plane *bottomPlane;
+	vec3 pNormal = vec3(0.0, 1.0, 0.0);
+	bottomPlane = new Plane(pNormal, 6.0);
 	invert(bottomPlane->transformation, stack->copyCurrentMatrix());
 	m = new Material();
 	m->generateGreenColour();
